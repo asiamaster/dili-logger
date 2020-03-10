@@ -4,15 +4,16 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
+ * 日志基类
  * <B>Description</B>
  * <B>Copyright:本软件源代码版权归农丰时代科技有限公司及其团队所有,未经许可不得任意复制与传播.</B>
  * <B>农丰时代科技有限公司</B>
  *
- * @author yuehongbo
- * @date 2020/3/10 14:24
+ * @author wangmi
+ * @date 2020/3/10 16:44
  */
-public class OperationLog implements Serializable {
-    private static final long serialVersionUID = -2668238368411037146L;
+public class BaseLog implements Serializable {
+    private static final long serialVersionUID = -2668238368411937146L;
 
     private Long id;
 
@@ -40,11 +41,6 @@ public class OperationLog implements Serializable {
      * 业务编码
      */
     private String businessCode;
-
-    /**
-     * 操作类型
-     */
-    private String operationType;
 
     /**
      * 日志类容
@@ -112,14 +108,6 @@ public class OperationLog implements Serializable {
 
     public void setBusinessCode(String businessCode) {
         this.businessCode = businessCode;
-    }
-
-    public String getOperationType() {
-        return operationType;
-    }
-
-    public void setOperationType(String operationType) {
-        this.operationType = operationType;
     }
 
     public String getContent() {
