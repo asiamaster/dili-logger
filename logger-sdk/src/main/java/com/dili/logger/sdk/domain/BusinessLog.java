@@ -1,7 +1,5 @@
 package com.dili.logger.sdk.domain;
 
-import java.io.Serializable;
-
 /**
  * 业务日志
  * <B>Description</B>
@@ -11,7 +9,7 @@ import java.io.Serializable;
  * @author yuehongbo
  * @date 2020/3/10 14:24
  */
-public class BusinessLog implements Serializable {
+public class BusinessLog extends BaseLog {
     private static final long serialVersionUID = -2618238368411037146L;
 
     /**
