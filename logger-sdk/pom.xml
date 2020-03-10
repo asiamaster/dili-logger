@@ -36,8 +36,8 @@
                 <version>3.8.1</version>
                 <!-- 编译JDK版本 -->
                 <configuration>
-                    <source>13</source>
-                    <target>13</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                     <encoding>UTF-8</encoding>
                     <!-- 支持参数名解析 -->
                     <parameters>true</parameters>
