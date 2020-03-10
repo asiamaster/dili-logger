@@ -1,7 +1,6 @@
 package com.dili.logger.mapper;
 
 import com.dili.logger.domain.ExceptionLog;
-import com.dili.logger.domain.OperationLog;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
 /**

@@ -1,8 +1,8 @@
 package com.dili.logger.component;
 
 import com.alibaba.fastjson.JSONObject;
-import com.dili.logger.domain.OperationLog;
-import com.dili.logger.service.OperationLogService;
+import com.dili.logger.domain.BusinessLog;
+import com.dili.logger.service.BusinessLogService;
 import com.rabbitmq.client.Channel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
@@ -25,7 +25,7 @@ import java.io.IOException;
 public class OperationLogListener {
 
     @Autowired
-    private OperationLogService operationLogService;
+    private BusinessLogService operationLogService;
 
     /**
      * 日志消息监听器
@@ -39,7 +39,7 @@ public class OperationLogListener {
         try {
             String data = new String(message.getBody(), "UTF-8");
             log.debug("获取到的body数据:" + data);
-            OperationLog operationLog = JSONObject.parseObject(data, OperationLog.class);
+            BusinessLog operationLog = JSONObject.parseObject(data, BusinessLog.class);
             operationLogService.save(operationLog);
             channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
         } catch (Exception e) {

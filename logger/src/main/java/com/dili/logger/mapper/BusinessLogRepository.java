@@ -1,6 +1,6 @@
 package com.dili.logger.mapper;
 
-import com.dili.logger.domain.OperationLog;
+import com.dili.logger.domain.BusinessLog;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
 /**
@@ -11,5 +11,5 @@ import org.springframework.data.elasticsearch.repository.ElasticsearchRepository
  * @author yuehongbo
  * @date 2020/2/10 18:01
  */
-public interface OperationLogRepository extends ElasticsearchRepository<OperationLog,Long> {
+public interface BusinessLogRepository extends ElasticsearchRepository<BusinessLog,Long> {
 }

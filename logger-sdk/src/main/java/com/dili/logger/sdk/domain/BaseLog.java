@@ -1,5 +1,7 @@
 package com.dili.logger.sdk.domain;
 
+import com.dili.ss.domain.BaseDomain;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -12,7 +14,7 @@ import java.time.LocalDateTime;
  * @author wangmi
  * @date 2020/3/10 16:44
  */
-public class BaseLog implements Serializable {
+public class BaseLog extends BaseDomain implements Serializable {
     private static final long serialVersionUID = -2668238368411937146L;
 
     private Long id;

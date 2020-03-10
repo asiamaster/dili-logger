@@ -2,10 +2,10 @@ package com.dili.logger.service.impl;
 
 import cn.hutool.core.util.StrUtil;
 import com.dili.logger.config.ESConfig;
-import com.dili.logger.domain.OperationLog;
-import com.dili.logger.domain.input.OperationLogQuery;
-import com.dili.logger.mapper.OperationLogRepository;
-import com.dili.logger.service.OperationLogService;
+import com.dili.logger.domain.BusinessLog;
+import com.dili.logger.mapper.BusinessLogRepository;
+import com.dili.logger.sdk.domain.input.BusinessLogQueryInput;
+import com.dili.logger.service.BusinessLogService;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.PageOutput;
 import com.dili.ss.sid.util.IdUtils;
@@ -35,17 +35,17 @@ import java.util.Objects;
  * @date 2020/2/10 18:12
  */
 @Service
-public class OperationLogServiceImpl implements OperationLogService<OperationLog> {
+public class BusinessLogServiceImpl implements BusinessLogService<BusinessLog> {
 
     @Autowired
-    private OperationLogRepository operationLogRepository;
+    private BusinessLogRepository businessLogRepository;
 
     @Autowired
     private ElasticsearchRestTemplate elasticsearchRestTemplate;
 
 
     @Override
-    public PageOutput<List<OperationLog>> searchPage(OperationLogQuery condition) {
+    public PageOutput<List<BusinessLog>> searchPage(BusinessLogQueryInput condition) {
         // 创建对象
         NativeSearchQueryBuilder searchQuery = new NativeSearchQueryBuilder();
         QueryBuilder queryBuilder = produceQuery(condition);
@@ -76,17 +76,17 @@ public class OperationLogServiceImpl implements OperationLogService<OperationLog
             }
             searchQuery.withPageable(PageRequest.of(pageNum - 1, condition.getRows()));
         }
-        ScrolledPage<OperationLog> pageInfo = elasticsearchRestTemplate.startScroll(5000, searchQuery.build(), OperationLog.class);
+        ScrolledPage<BusinessLog> pageInfo = elasticsearchRestTemplate.startScroll(5000, searchQuery.build(), BusinessLog.class);
         if (0 == pageInfo.getTotalElements()) {
             return PageOutput.success();
         }
         PageOutput output = PageOutput.success();
         output.setPages(pageInfo.getTotalPages());
         output.setPageNum(pageNum).setTotal(Long.valueOf(pageInfo.getTotalElements()).intValue());
-        List<OperationLog> allData = Lists.newArrayList();
+        List<BusinessLog> allData = Lists.newArrayList();
         allData.addAll(pageInfo.getContent());
         for (int i = 0; i < pageNum - 1; i++) {
-            pageInfo = elasticsearchRestTemplate.continueScroll(pageInfo.getScrollId(), 5000, OperationLog.class);
+            pageInfo = elasticsearchRestTemplate.continueScroll(pageInfo.getScrollId(), 5000, BusinessLog.class);
             if (isGetAll) {
                 allData.addAll(pageInfo.getContent());
             }
@@ -98,29 +98,29 @@ public class OperationLogServiceImpl implements OperationLogService<OperationLog
     }
 
     @Override
-    public BaseOutput<List<OperationLog>> list(OperationLogQuery condition) {
+    public BaseOutput<List<BusinessLog>> list(BusinessLogQueryInput condition) {
         return BaseOutput.success().setData(this.searchPage(condition).getData());
     }
 
     @Override
-    public void save(OperationLog log) {
+    public void save(BusinessLog log) {
         if (Objects.isNull(log.getId())) {
             log.setId(IdUtils.nextId());
         }
         if (Objects.isNull(log.getCreateTime())) {
             log.setCreateTime(LocalDateTime.now());
         }
-        operationLogRepository.save(log);
+        businessLogRepository.save(log);
     }
 
     @Override
-    public void batchSave(List<OperationLog> logList) {
-        operationLogRepository.saveAll(logList);
+    public void batchSave(List<BusinessLog> logList) {
+        businessLogRepository.saveAll(logList);
     }
 
     @Override
     public void deleteAll() {
-        operationLogRepository.deleteAll();
+        businessLogRepository.deleteAll();
     }
 
     /**
@@ -129,7 +129,7 @@ public class OperationLogServiceImpl implements OperationLogService<OperationLog
      * @param condition 根据传入参数，构造查询条件
      * @return
      */
-    private QueryBuilder produceQuery(OperationLogQuery condition) {
+    private QueryBuilder produceQuery(BusinessLogQueryInput condition) {
         // 在queryBuilder对象中自定义查询
         BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery();
         if (Objects.nonNull(condition)) {

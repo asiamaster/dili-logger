@@ -17,7 +17,7 @@
 	</parent>
 	
 	<modules>
-<!--		<module>logger</module>-->
+		<module>logger</module>
 		<module>logger-sdk</module>
 	</modules>
 

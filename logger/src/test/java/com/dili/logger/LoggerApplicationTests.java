@@ -2,9 +2,9 @@ package com.dili.logger;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.alibaba.fastjson.JSONObject;
-import com.dili.logger.domain.OperationLog;
-import com.dili.logger.domain.input.OperationLogQuery;
-import com.dili.logger.service.OperationLogService;
+import com.dili.logger.domain.BusinessLog;
+import com.dili.logger.domain.input.BusinessLogQuery;
+import com.dili.logger.service.BusinessLogService;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.PageOutput;
 import com.google.common.collect.Lists;
@@ -25,11 +25,11 @@ import java.util.List;
 class LoggerApplicationTests {
 
 	@Autowired
-	private OperationLogService operationLogService;
+	private BusinessLogService operationLogService;
 
 	@Test
 	void testSaveOperationLog() {
-		OperationLog temp = new OperationLog();
+		BusinessLog temp = new BusinessLog();
 		temp.setBusinessId(System.currentTimeMillis());
 		temp.setBusinessType("ia");
 		temp.setContent("这是junit测试内容内容");
@@ -41,9 +41,9 @@ class LoggerApplicationTests {
 
 	@Test
 	void testBatchSaveOperationLog() {
-		List<OperationLog> logList = Lists.newArrayList();
+		List<BusinessLog> logList = Lists.newArrayList();
 		for (int i=0;i<=10;i++){
-			OperationLog temp = new OperationLog();
+			BusinessLog temp = new BusinessLog();
 			temp.setBusinessId(System.currentTimeMillis());
 			temp.setBusinessType("ia");
 			JSONObject object = new JSONObject();
@@ -60,13 +60,13 @@ class LoggerApplicationTests {
 
 	@Test
 	void testListPageOperationLog() {
-		OperationLogQuery temp = new OperationLogQuery();
+		BusinessLogQuery temp = new BusinessLogQuery();
 //		temp.setBusinessId(System.currentTimeMillis());
 //		temp.setBusinessType("ia");
 //		temp.setOperatorId(Long.valueOf(1));
 //		temp.setCreateTime(LocalDateTime.now());
 //		temp.setMarketId(1L);
-		PageOutput<List<OperationLog>> listPage = operationLogService.searchPage(temp);
+		PageOutput<List<BusinessLog>> listPage = operationLogService.searchPage(temp);
 		System.out.println("总记录数："+listPage.getTotal());
 		System.out.println("总页数："+listPage.getPages());
 		System.out.println("数据长度："+listPage.getData().size());
@@ -74,7 +74,7 @@ class LoggerApplicationTests {
 
 	@Test
 	void testListOperationLog() {
-		OperationLogQuery temp = new OperationLogQuery();
+		BusinessLogQuery temp = new BusinessLogQuery();
 //		temp.setBusinessId(System.currentTimeMillis());
 //		temp.setBusinessType("ia");
 //		temp.setCreateTime(LocalDateTime.now());
@@ -83,8 +83,8 @@ class LoggerApplicationTests {
 //		temp.setCreateTimeStart(LocalDateTime.now().minusHours(3));
 //		temp.setCreateTimeEnd(LocalDateTime.now().plusHours(2));
 
-		BaseOutput<List<OperationLog>> list = operationLogService.list(temp);
-		List<OperationLog> data = list.getData();
+		BaseOutput<List<BusinessLog>> list = operationLogService.list(temp);
+		List<BusinessLog> data = list.getData();
 		if (CollectionUtil.isNotEmpty(data)) {
 			System.out.println("数据长度：" + data.size());
 			data.forEach(o -> {

@@ -1,7 +1,7 @@
 package com.dili.logger.service;
 
-import com.dili.logger.domain.OperationLog;
-import com.dili.logger.domain.input.OperationLogQuery;
+import com.dili.logger.domain.BusinessLog;
+import com.dili.logger.sdk.domain.input.BusinessLogQueryInput;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.PageOutput;
 
@@ -15,7 +15,7 @@ import java.util.List;
  * @author yuehongbo
  * @date 2020/2/10 18:03
  */
-public interface OperationLogService<T> {
+public interface BusinessLogService<T> {
 
     /**
      * 分页查询操作日志信息
@@ -23,26 +23,26 @@ public interface OperationLogService<T> {
      * @param condition 条件
      * @return
      */
-    PageOutput<List<OperationLog>> searchPage(OperationLogQuery condition);
+    PageOutput<List<BusinessLog>> searchPage(BusinessLogQueryInput condition);
 
     /**
      * 根据条件查询操作日志
      * @param condition 查询条件
      * @return
      */
-    BaseOutput<List<OperationLog>> list(OperationLogQuery condition);
+    BaseOutput<List<BusinessLog>> list(BusinessLogQueryInput condition);
 
     /**
      * 保存操作日志信息
      * @param log 日志对象
      */
-    void save(OperationLog log);
+    void save(BusinessLog log);
 
     /**
      * 批量保存操作日志
      * @param logList
      */
-    void batchSave(List<OperationLog> logList);
+    void batchSave(List<BusinessLog> logList);
 
     /**
      * 删除对应的所有数据

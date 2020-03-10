@@ -88,6 +88,13 @@
 			<version>5.1.5</version>
 		</dependency>
 		<!-- 内部包  -->
+
+		<dependency>
+			<groupId>com.dili</groupId>
+			<artifactId>logger-sdk</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
 		<dependency>
 			<groupId>com.dili</groupId>
 			<artifactId>ss-uid</artifactId>

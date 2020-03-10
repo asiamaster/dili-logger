@@ -1,11 +1,8 @@
 package com.dili.logger.controller;
 
-import cn.hutool.core.map.MapUtil;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.dili.logger.domain.OperationLog;
-import com.dili.logger.domain.input.OperationLogQuery;
-import com.dili.logger.service.OperationLogService;
+import com.dili.logger.domain.BusinessLog;
+import com.dili.logger.sdk.domain.input.BusinessLogQueryInput;
+import com.dili.logger.service.BusinessLogService;
 import com.dili.ss.domain.EasyuiPageOutput;
 import com.dili.ss.domain.PageOutput;
 import com.dili.ss.metadata.ValueProviderUtils;
@@ -18,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * <B>Description</B>
@@ -29,11 +25,11 @@ import java.util.Map;
  * @date 2020/3/2 10:26
  */
 @Controller
-@RequestMapping("/operationLog")
-public class OperationLogController {
+@RequestMapping("/businessLog")
+public class BusinessLogController {
 
     @Autowired
-    private OperationLogService operationLogService;
+    private BusinessLogService businessLogService;
 
     /**
      * 跳转到个人客户管理页面
@@ -43,7 +39,7 @@ public class OperationLogController {
      */
     @RequestMapping(value = "/index.html", method = RequestMethod.GET)
     public String index(ModelMap modelMap) {
-        return "operation/index";
+        return "business/index";
     }
 
     /**
@@ -54,9 +50,9 @@ public class OperationLogController {
      */
     @RequestMapping(value = "/listPage.action", method = {RequestMethod.POST})
     @ResponseBody
-    public String listPage(OperationLogQuery condition) throws Exception {
-        PageOutput<List<OperationLog>> pageOutput = operationLogService.searchPage(condition);
-        List<OperationLog> operationLogList = pageOutput.getData();
+    public String listPage(BusinessLogQueryInput condition) throws Exception {
+        PageOutput<List<BusinessLog>> pageOutput = businessLogService.searchPage(condition);
+        List<BusinessLog> operationLogList = pageOutput.getData();
         if (null == operationLogList) {
             operationLogList = Lists.newArrayList();
         }

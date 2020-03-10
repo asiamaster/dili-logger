@@ -5,7 +5,6 @@ import com.dili.logger.sdk.domain.input.ExceptionLogQueryInput;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.PageOutput;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -20,9 +19,9 @@ import java.util.List;
  * @date 2020/3/10 15:16
  */
 @FeignClient(name = "dili-logger")
-public interface ExceptionLogRpc {
+public interface BusinessLogRpc {
 
-    @RequestMapping(value = "/api/exceptionLog/save", method = {RequestMethod.POST})
+    @RequestMapping(value = "/api/businessLog/save", method = {RequestMethod.POST})
     BaseOutput save(ExceptionLog condition);
 
     /**
@@ -30,7 +29,7 @@ public interface ExceptionLogRpc {
      * @param customer
      * @return
      */
-    @RequestMapping(value = "/api/exceptionLog/listPage", method = RequestMethod.POST)
+    @RequestMapping(value = "/api/businessLog/listPage", method = RequestMethod.POST)
     PageOutput<List<ExceptionLog>> listPage(ExceptionLogQueryInput customer);
 
     /**
@@ -39,6 +38,6 @@ public interface ExceptionLogRpc {
      * @param condition
      * @return
      */
-    @RequestMapping(value = "/api/exceptionLog/list", method = {RequestMethod.POST})
+    @RequestMapping(value = "/api/businessLog/list", method = {RequestMethod.POST})
     BaseOutput list(ExceptionLogQueryInput condition);
 }
