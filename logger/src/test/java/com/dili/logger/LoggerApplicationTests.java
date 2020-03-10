@@ -3,7 +3,7 @@ package com.dili.logger;
 import cn.hutool.core.collection.CollectionUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.dili.logger.domain.BusinessLog;
-import com.dili.logger.domain.input.BusinessLogQuery;
+import com.dili.logger.sdk.domain.input.BusinessLogQueryInput;
 import com.dili.logger.service.BusinessLogService;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.PageOutput;
@@ -60,7 +60,7 @@ class LoggerApplicationTests {
 
 	@Test
 	void testListPageOperationLog() {
-		BusinessLogQuery temp = new BusinessLogQuery();
+		BusinessLogQueryInput temp = new BusinessLogQueryInput();
 //		temp.setBusinessId(System.currentTimeMillis());
 //		temp.setBusinessType("ia");
 //		temp.setOperatorId(Long.valueOf(1));
@@ -74,7 +74,7 @@ class LoggerApplicationTests {
 
 	@Test
 	void testListOperationLog() {
-		BusinessLogQuery temp = new BusinessLogQuery();
+		BusinessLogQueryInput temp = new BusinessLogQueryInput();
 //		temp.setBusinessId(System.currentTimeMillis());
 //		temp.setBusinessType("ia");
 //		temp.setCreateTime(LocalDateTime.now());

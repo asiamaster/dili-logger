@@ -1,17 +1,17 @@
 <#bs4Body>
 
 <div class="container-fluid">
-    <form class="form" id="businessLogQueryForm">
+    <form class="form" id="exceptionLogQueryForm">
         <div class="row">
             <nav class="col-12" aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item active" aria-current="page">操作日志</li>
+                    <li class="breadcrumb-item active" aria-current="page">异常日志</li>
                 </ol>
             </nav>
         </div>
         <div class="row  row-cols-6">
             <div class="form-group col-auto">
-                <label for="createTimeStart" class="justify-content-end">操作日期</label>
+                <label for="createTimeStart" class="justify-content-end">异常日期</label>
                 <div class="form-inline">
                     <div class="input-group">
                         <input type="text" name="createTimeStart" id="createTimeStart" class="form-control laydatetime"/>
@@ -28,23 +28,14 @@
                 </div>
             </div>
             <div class="form-group col">
-                <label for="">操作类型</label>
-                <select class="form-control" id="operationType" name="operationType"></select>
-                <#bcomboProvider _id="operationType" _provider="dataDictionaryValueProvider"  _queryParams='{dd_code:"operation_type"}' _valueField="value" _textField="text" _value=""/>
-            </div>
-            <div class="form-group col">
-                <label for="">业务类型</label>
-                <select class="form-control" id="businessType" name="businessType"></select>
-                <#bcomboProvider _id="businessType" _provider="dataDictionaryValueProvider"  _queryParams='{dd_code:"log_business_type"}' _valueField="value" _textField="text" _value=""/>
-            </div>
-            <div class="form-group col">
-                <label for="_operatorId" class="">操作人</label>
-                <#bautoCompleteProvider _hiddenDomainId="operatorId" _hiddenDomainName="operatorId" _displayDomainId="_operatorId" _displayDomainName="_operatorId" _placeholder="" _provider="userProvider" _validatorMethod="isSelected" _value="" _text="" />
+                <label for="">异常类型</label>
+                <select class="form-control" id="exceptionType" name="exceptionType"></select>
+                <#bcomboProvider _id="exceptionType" _provider="dataDictionaryValueProvider"  _queryParams='{dd_code:"exception_type"}' _valueField="value" _textField="text" _value=""/>
             </div>
         </div>
         <div class="">
-            <button type="button" class="btn btn-outline-primary mr-2"onclick="javascript:$('#businessLogQueryForm')[0].reset();"><i class="fa fa-refresh"></i> 清空</button>
-            <button type="button" class="btn btn-outline-primary" onclick="queryBusinessLogDataHandler()"><i class="fa fa-search"></i> 查询</button>
+            <button type="button" class="btn btn-outline-primary mr-2"onclick="javascript:$('#exceptionLogQueryForm')[0].reset();"><i class="fa fa-refresh"></i> 清空</button>
+            <button type="button" class="btn btn-outline-primary" onclick="queryExceptionLogDataHandler()"><i class="fa fa-search"></i> 查询</button>
         </div>
     </form>
     <hr>
@@ -56,7 +47,7 @@
                             class="fa fa-file-excel-o"></i>导出
                     </button>
                 </div>
-                <table id="businessLogGrid" data-toggle="table" data-title="业务日志列表" class="table" data-toolbar="#toolbar"
+                <table id="exceptionLogGrid" data-toggle="table" data-title="异常日志列表" class="table" data-toolbar="#toolbar"
                        data-pagination="true" data-page-number="1" data-page-size="10" data-query-params="queryParams"
                        data-side-pagination="server" data-method="POST"
                        data-content-type="application/x-www-form-urlencoded" data-single-select="true"
@@ -65,32 +56,28 @@
                        data-show-refresh="true" data-show-fullscreen="true" data-show-columns="true">
                     <thead>
                     <tr>
-                       <!-- <th data-width-unit="%" data-width="2" data-checkbox="true"></th>-->
+                        <!-- <th data-width-unit="%" data-width="2" data-checkbox="true"></th>-->
                         <th data-width-unit="%" data-width="10" data-field="businessType" data-align="center" data-provider="dataDictionaryValueProvider" data-query-params='{dd_code:"log_business_type"}'>
                             业务类型
                         </th>
                         <th data-width-unit="%" data-width="10" data-field="businessCode" data-align="center">
                             业务编号
                         </th>
-<!--                        <th data-width-unit="%" data-width="20" data-field="marketId" data-align="center">-->
-<!--                            所属市场-->
-<!--                        </th>-->
-                        <th data-width-unit="%" data-width="10" data-field="operationType" data-align="center" data-provider="dataDictionaryValueProvider" data-query-params='{dd_code:"operation_type"}'>
-                            操作类型
+                        <!--                        <th data-width-unit="%" data-width="20" data-field="marketId" data-align="center">-->
+                        <!--                            所属市场-->
+                        <!--                        </th>-->
+                        <th data-width-unit="%" data-width="10" data-field="exceptionType" data-align="center" data-provider="dataDictionaryValueProvider" data-query-params='{dd_code:"exception_type"}'>
+                            异常类型
                         </th>
                         <th data-width-unit="%" data-width="10" data-field="content" data-formatter="contentFormatTip" data-align="center">
-                            日志内容
+                            异常信息
                         </th>
                         <th data-width-unit="%" data-width="10" data-field="notes" data-align="center">
                             备注
                         </th>
-                        <th data-width-unit="%" data-width="10" data-field="operatorId" data-align="center" data-provider="userProvider">
-                            操作人
-                        </th>
                         <th data-width-unit="%" data-width="15" data-field="createTime" data-align="center" data-provider="datetimeProvider">
-                            操作时间
+                            异常时间
                         </th>
-
                     </tr>
                     </thead>
                 </table>
@@ -114,19 +101,19 @@
             sort: params.sort,
             order: params.order
         };
-        return $.extend(temp, bui.util.bindGridMeta2Form('businessLogGrid', 'businessLogQueryForm'));
+        return $.extend(temp, bui.util.bindGridMeta2Form('exceptionLogGrid', 'exceptionLogQueryForm'));
     }
 
     /**
      * 查询处理
      */
-    function queryBusinessLogDataHandler() {
+    function queryExceptionLogDataHandler() {
         $('#toolbar button').attr('disabled', false);
-        $('#businessLogGrid').bootstrapTable('refreshOptions', {url: '/businessLog/listPage.action'});
+        $('#exceptionLogGrid').bootstrapTable('refreshOptions', {url: '/exceptionLog/listPage.action'});
     }
 
     $(function () {
-        queryBusinessLogDataHandler();
+        queryExceptionLogDataHandler();
     });
 
     /**

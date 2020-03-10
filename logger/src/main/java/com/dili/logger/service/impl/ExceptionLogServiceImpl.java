@@ -2,7 +2,6 @@ package com.dili.logger.service.impl;
 
 import cn.hutool.core.util.StrUtil;
 import com.dili.logger.config.ESConfig;
-import com.dili.logger.domain.BusinessLog;
 import com.dili.logger.domain.ExceptionLog;
 import com.dili.logger.mapper.ExceptionLogRepository;
 import com.dili.logger.sdk.domain.input.ExceptionLogQueryInput;
@@ -77,17 +76,17 @@ public class ExceptionLogServiceImpl implements ExceptionLogService {
             }
             searchQuery.withPageable(PageRequest.of(pageNum - 1, condition.getRows()));
         }
-        ScrolledPage<BusinessLog> pageInfo = elasticsearchRestTemplate.startScroll(5000, searchQuery.build(), BusinessLog.class);
+        ScrolledPage<ExceptionLog> pageInfo = elasticsearchRestTemplate.startScroll(5000, searchQuery.build(), ExceptionLog.class);
         if (0 == pageInfo.getTotalElements()) {
             return PageOutput.success();
         }
         PageOutput output = PageOutput.success();
         output.setPages(pageInfo.getTotalPages());
         output.setPageNum(pageNum).setTotal(Long.valueOf(pageInfo.getTotalElements()).intValue());
-        List<BusinessLog> allData = Lists.newArrayList();
+        List<ExceptionLog> allData = Lists.newArrayList();
         allData.addAll(pageInfo.getContent());
         for (int i = 0; i < pageNum - 1; i++) {
-            pageInfo = elasticsearchRestTemplate.continueScroll(pageInfo.getScrollId(), 5000, BusinessLog.class);
+            pageInfo = elasticsearchRestTemplate.continueScroll(pageInfo.getScrollId(), 5000, ExceptionLog.class);
             if (isGetAll) {
                 allData.addAll(pageInfo.getContent());
             }

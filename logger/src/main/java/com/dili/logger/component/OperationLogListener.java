@@ -33,7 +33,7 @@ public class OperationLogListener {
      * @param message
      * @throws Exception
      */
-    @RabbitListener(queues = "#{rabbitMQConfig.LOGGER_ADD_OPERATION_QUEUE}", concurrency = "10")
+    @RabbitListener(queues = "#{rabbitMQConfig.LOGGER_ADD_BUSINESS_QUEUE}", concurrency = "10")
     public void processMessage(Channel channel, Message message) {
         log.info("收到消息: " + message);
         try {

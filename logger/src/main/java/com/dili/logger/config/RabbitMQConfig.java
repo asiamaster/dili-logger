@@ -22,8 +22,8 @@ public class RabbitMQConfig {
 
     //消息交换机
     public static final String LOGGER_TOPIC_EXCHANGE = "dili.logger.topicExchange";
-    public static final String LOGGER_ADD_OPERATION_KEY = "dili.logger.addOperationKey";
-    public static final String LOGGER_ADD_OPERATION_QUEUE = "dili.logger.addOperationQueue";
+    public static final String LOGGER_ADD_BUSINESS_KEY = "dili.logger.addBusinessKey";
+    public static final String LOGGER_ADD_BUSINESS_QUEUE = "dili.logger.addBusinessQueue";
 
     @Bean
     public MessageConverter messageConverter() {
@@ -37,11 +37,11 @@ public class RabbitMQConfig {
 
     @Bean
     public Queue addOperationQueue() {
-        return new Queue(LOGGER_ADD_OPERATION_QUEUE, true, false, false);
+        return new Queue(LOGGER_ADD_BUSINESS_QUEUE, true, false, false);
     }
 
     @Bean
     public Binding addOperationBinding() {
-        return BindingBuilder.bind(addOperationQueue()).to(topicExchange()).with(LOGGER_ADD_OPERATION_KEY);
+        return BindingBuilder.bind(addOperationQueue()).to(topicExchange()).with(LOGGER_ADD_BUSINESS_KEY);
     }
 }

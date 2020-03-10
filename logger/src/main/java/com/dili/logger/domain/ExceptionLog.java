@@ -23,7 +23,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @ToString(callSuper = true)
-@Document(indexName = "exception-logger", type = "exceptionLog")
+@Document(indexName = "dili-exception-logger", type = "exceptionLog")
 public class ExceptionLog extends BaseLog implements Serializable {
 
     private static final long serialVersionUID = 5204495241923955295L;

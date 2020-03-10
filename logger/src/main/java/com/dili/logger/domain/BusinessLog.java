@@ -23,7 +23,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @ToString(callSuper = true)
-@Document(indexName = "operation-logger", type = "businessLog")
+@Document(indexName = "dili-business-logger", type = "businessLog")
 public class BusinessLog extends BaseLog implements Serializable {
 
     private static final long serialVersionUID = 7077180344239431179L;
