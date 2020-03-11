@@ -32,7 +32,7 @@ public class BusinessLogApiController {
      * @param condition
      * @return
      */
-    @CrossOrigin(origins = "*")
+    @CrossOrigin(origins = "*.diligrp.com")
     @RequestMapping(value = "/save",method = {RequestMethod.POST})
     public BaseOutput save(@RequestBody BusinessLog condition) {
         businessLogService.save(condition);
@@ -44,7 +44,7 @@ public class BusinessLogApiController {
      * @param businessLogList
      * @return
      */
-    @CrossOrigin(origins = "*")
+    @CrossOrigin(origins = "*.diligrp.com")
     @RequestMapping(value = "/batchSave",method = {RequestMethod.POST})
     public BaseOutput save(@RequestBody List<BusinessLog> businessLogList) {
         businessLogService.batchSave(businessLogList);

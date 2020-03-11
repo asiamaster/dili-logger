@@ -31,7 +31,7 @@ public class ExceptionLogApiController {
      * @param condition
      * @return
      */
-    @CrossOrigin(origins = "*")
+    @CrossOrigin(origins = "*.diligrp.com")
     @RequestMapping(value = "/save", method = {RequestMethod.POST})
     public BaseOutput save(@RequestBody ExceptionLog condition) {
         exceptionLogService.save(condition);
@@ -43,7 +43,7 @@ public class ExceptionLogApiController {
      * @param exceptionLogList
      * @return
      */
-    @CrossOrigin(origins = "*")
+    @CrossOrigin(origins = "*.diligrp.com")
     @RequestMapping(value = "/batchSave",method = {RequestMethod.POST})
     public BaseOutput batchSave(@RequestBody List<ExceptionLog> exceptionLogList) {
         exceptionLogService.batchSave(exceptionLogList);
