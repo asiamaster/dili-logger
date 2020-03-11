@@ -1,5 +1,6 @@
 package com.dili.logger.service.impl;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import com.dili.logger.config.ESConfig;
 import com.dili.logger.domain.ExceptionLog;
@@ -115,7 +116,18 @@ public class ExceptionLogServiceImpl implements ExceptionLogService {
 
     @Override
     public void batchSave(List<ExceptionLog> logList) {
-        exceptionLogRepository.saveAll(logList);
+        if (CollectionUtil.isNotEmpty(logList)) {
+            logList.forEach(l -> {
+                if (Objects.isNull(l.getId())) {
+                    l.setId(IdUtils.nextId());
+                }
+                if (Objects.isNull(l.getCreateTime())) {
+                    l.setCreateTime(LocalDateTime.now());
+                }
+            });
+            exceptionLogRepository.saveAll(logList);
+        }
+
     }
 
     @Override

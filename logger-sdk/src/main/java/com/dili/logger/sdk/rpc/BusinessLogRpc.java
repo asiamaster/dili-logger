@@ -1,6 +1,8 @@
 package com.dili.logger.sdk.rpc;
 
+import com.dili.logger.sdk.domain.BusinessLog;
 import com.dili.logger.sdk.domain.ExceptionLog;
+import com.dili.logger.sdk.domain.input.BusinessLogQueryInput;
 import com.dili.logger.sdk.domain.input.ExceptionLogQueryInput;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.PageOutput;
@@ -21,8 +23,21 @@ import java.util.List;
 @FeignClient(name = "dili-logger")
 public interface BusinessLogRpc {
 
+    /**
+     * 保存单个业务日志信息
+     * @param condition
+     * @return
+     */
     @RequestMapping(value = "/api/businessLog/save", method = {RequestMethod.POST})
-    BaseOutput save(ExceptionLog condition);
+    BaseOutput save(BusinessLog condition);
+
+    /**
+     * 批量保存业务日志数据
+     * @param businessLogList
+     * @return
+     */
+    @RequestMapping(value = "/api/businessLog/batchSave", method = {RequestMethod.POST})
+    BaseOutput batchSave(List<BusinessLog> businessLogList);
 
     /**
      * 获取客户列表信息
@@ -30,7 +45,7 @@ public interface BusinessLogRpc {
      * @return
      */
     @RequestMapping(value = "/api/businessLog/listPage", method = RequestMethod.POST)
-    PageOutput<List<ExceptionLog>> listPage(ExceptionLogQueryInput customer);
+    PageOutput<List<BusinessLog>> listPage(BusinessLogQueryInput customer);
 
     /**
      * 查询日志数据
@@ -39,5 +54,5 @@ public interface BusinessLogRpc {
      * @return
      */
     @RequestMapping(value = "/api/businessLog/list", method = {RequestMethod.POST})
-    BaseOutput list(ExceptionLogQueryInput condition);
+    BaseOutput list(BusinessLogQueryInput condition);
 }

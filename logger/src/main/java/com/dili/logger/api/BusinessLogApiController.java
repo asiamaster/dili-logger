@@ -6,7 +6,10 @@ import com.dili.logger.service.BusinessLogService;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.PageOutput;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * <B>Description</B>
@@ -24,15 +27,27 @@ public class BusinessLogApiController {
     private BusinessLogService businessLogService;
 
     /**
-     * 分页查询日志数据
+     * 保存业务日志数据
      *
      * @param condition
      * @return
      */
     @CrossOrigin(origins = "*")
-    @RequestMapping(value = "/save", method = {RequestMethod.POST})
+    @RequestMapping(value = "/save",method = {RequestMethod.POST})
     public BaseOutput save(@RequestBody BusinessLog condition) {
         businessLogService.save(condition);
+        return BaseOutput.success();
+    }
+
+    /**
+     * 批量保存业务日志信息
+     * @param businessLogList
+     * @return
+     */
+    @CrossOrigin(origins = "*")
+    @RequestMapping(value = "/batchSave",method = {RequestMethod.POST})
+    public BaseOutput save(@RequestBody List<BusinessLog> businessLogList) {
+        businessLogService.batchSave(businessLogList);
         return BaseOutput.success();
     }
 

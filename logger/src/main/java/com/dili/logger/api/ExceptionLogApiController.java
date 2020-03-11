@@ -1,15 +1,14 @@
 package com.dili.logger.api;
 
-import com.dili.logger.domain.BusinessLog;
 import com.dili.logger.domain.ExceptionLog;
-import com.dili.logger.sdk.domain.input.BusinessLogQueryInput;
 import com.dili.logger.sdk.domain.input.ExceptionLogQueryInput;
-import com.dili.logger.service.BusinessLogService;
 import com.dili.logger.service.ExceptionLogService;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.PageOutput;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * <B>Description</B>
@@ -27,7 +26,7 @@ public class ExceptionLogApiController {
     private ExceptionLogService exceptionLogService;
 
     /**
-     * 分页查询日志数据
+     * 保存异常日志数据
      *
      * @param condition
      * @return
@@ -36,6 +35,18 @@ public class ExceptionLogApiController {
     @RequestMapping(value = "/save", method = {RequestMethod.POST})
     public BaseOutput save(@RequestBody ExceptionLog condition) {
         exceptionLogService.save(condition);
+        return BaseOutput.success();
+    }
+
+    /**
+     * 批量保存业务日志信息
+     * @param exceptionLogList
+     * @return
+     */
+    @CrossOrigin(origins = "*")
+    @RequestMapping(value = "/batchSave",method = {RequestMethod.POST})
+    public BaseOutput batchSave(@RequestBody List<ExceptionLog> exceptionLogList) {
+        exceptionLogService.batchSave(exceptionLogList);
         return BaseOutput.success();
     }
 
