@@ -1,5 +1,6 @@
 package com.dili.logger.sdk.domain;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.dili.ss.domain.BaseDomain;
 
 import java.io.Serializable;
@@ -136,6 +137,7 @@ public class BaseLog extends BaseDomain implements Serializable {
         this.operatorId = operatorId;
     }
 
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     public LocalDateTime getCreateTime() {
         return createTime;
     }
