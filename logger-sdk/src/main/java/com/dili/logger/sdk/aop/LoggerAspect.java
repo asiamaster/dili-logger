@@ -29,6 +29,7 @@ import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -48,6 +49,7 @@ import java.util.*;
 @Component
 @Aspect
 @ConditionalOnExpression("'${logger.enable}'=='true'")
+@ConditionalOnClass(RabbitTemplate.class)
 public class LoggerAspect {
 
     @Resource(name="StringGroupTemplate")

@@ -7,6 +7,7 @@ import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @ConditionalOnExpression("'${logger.enable}'=='true'")
+@ConditionalOnClass(RabbitTemplate.class)
 public class LoggerRabbitProducerConfiguration implements RabbitTemplate.ConfirmCallback, RabbitTemplate.ReturnCallback {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(LoggerRabbitProducerConfiguration.class);

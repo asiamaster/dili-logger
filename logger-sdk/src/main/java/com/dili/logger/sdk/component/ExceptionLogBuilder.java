@@ -5,6 +5,8 @@ import com.dili.logger.sdk.base.LoggerContext;
 import com.dili.logger.sdk.domain.BaseLog;
 import com.dili.logger.sdk.domain.ExceptionLog;
 import com.dili.logger.sdk.glossary.LoggerConstant;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +17,7 @@ import java.lang.reflect.Method;
  */
 @Component
 @ConditionalOnExpression("'${logger.enable}'=='true'")
+@ConditionalOnClass(RabbitTemplate.class)
 public class ExceptionLogBuilder implements LogBuilder {
 
     @Override
