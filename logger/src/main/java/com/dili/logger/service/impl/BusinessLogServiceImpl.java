@@ -1,5 +1,6 @@
 package com.dili.logger.service.impl;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import com.dili.logger.config.ESConfig;
 import com.dili.logger.domain.BusinessLog;
@@ -115,7 +116,17 @@ public class BusinessLogServiceImpl implements BusinessLogService<BusinessLog> {
 
     @Override
     public void batchSave(List<BusinessLog> logList) {
-        businessLogRepository.saveAll(logList);
+        if (CollectionUtil.isNotEmpty(logList)) {
+            logList.forEach(l -> {
+                if (Objects.isNull(l.getId())) {
+                    l.setId(IdUtils.nextId());
+                }
+                if (Objects.isNull(l.getCreateTime())) {
+                    l.setCreateTime(LocalDateTime.now());
+                }
+            });
+            businessLogRepository.saveAll(logList);
+        }
     }
 
     @Override

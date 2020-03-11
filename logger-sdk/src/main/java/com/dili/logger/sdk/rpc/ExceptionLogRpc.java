@@ -1,5 +1,6 @@
 package com.dili.logger.sdk.rpc;
 
+import com.dili.logger.sdk.domain.BusinessLog;
 import com.dili.logger.sdk.domain.ExceptionLog;
 import com.dili.logger.sdk.domain.input.ExceptionLogQueryInput;
 import com.dili.ss.domain.BaseOutput;
@@ -22,8 +23,21 @@ import java.util.List;
 @FeignClient(name = "dili-logger")
 public interface ExceptionLogRpc {
 
+    /**
+     * 保存单个异常日志数据
+     * @param condition
+     * @return
+     */
     @RequestMapping(value = "/api/exceptionLog/save", method = {RequestMethod.POST})
     BaseOutput save(ExceptionLog condition);
+
+    /**
+     * 批量保存异常日志数据
+     * @param exceptionLogList
+     * @return
+     */
+    @RequestMapping(value = "/api/exceptionLog/batchSave", method = {RequestMethod.POST})
+    BaseOutput batchSave(List<ExceptionLog> exceptionLogList);
 
     /**
      * 获取客户列表信息
