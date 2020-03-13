@@ -6,7 +6,6 @@ import com.dili.logger.service.BusinessLogService;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.PageOutput;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,7 +31,7 @@ public class BusinessLogApiController {
      * @param condition
      * @return
      */
-    @CrossOrigin(origins = "*.diligrp.com")
+    @CrossOrigin(origins = {"*"})
     @RequestMapping(value = "/save",method = {RequestMethod.POST})
     public BaseOutput save(@RequestBody BusinessLog condition) {
         businessLogService.save(condition);
@@ -44,9 +43,9 @@ public class BusinessLogApiController {
      * @param businessLogList
      * @return
      */
-    @CrossOrigin(origins = "*.diligrp.com")
+    @CrossOrigin(origins = {"*"})
     @RequestMapping(value = "/batchSave",method = {RequestMethod.POST})
-    public BaseOutput save(@RequestBody List<BusinessLog> businessLogList) {
+    public BaseOutput batchSave(@RequestBody List<BusinessLog> businessLogList) {
         businessLogService.batchSave(businessLogList);
         return BaseOutput.success();
     }
