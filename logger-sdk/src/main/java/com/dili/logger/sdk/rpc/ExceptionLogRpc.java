@@ -1,12 +1,10 @@
 package com.dili.logger.sdk.rpc;
 
-import com.dili.logger.sdk.domain.BusinessLog;
 import com.dili.logger.sdk.domain.ExceptionLog;
 import com.dili.logger.sdk.domain.input.ExceptionLogQueryInput;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.PageOutput;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -20,7 +18,7 @@ import java.util.List;
  * @author yuehongbo
  * @date 2020/3/10 15:16
  */
-@FeignClient(name = "dili-logger")
+@FeignClient(name = "dili-logger", contextId = "exceptionLogRpc")
 public interface ExceptionLogRpc {
 
     /**

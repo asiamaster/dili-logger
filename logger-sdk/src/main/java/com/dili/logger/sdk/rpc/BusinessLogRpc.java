@@ -1,9 +1,7 @@
 package com.dili.logger.sdk.rpc;
 
 import com.dili.logger.sdk.domain.BusinessLog;
-import com.dili.logger.sdk.domain.ExceptionLog;
 import com.dili.logger.sdk.domain.input.BusinessLogQueryInput;
-import com.dili.logger.sdk.domain.input.ExceptionLogQueryInput;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.PageOutput;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -20,7 +18,7 @@ import java.util.List;
  * @author yuehongbo
  * @date 2020/3/10 15:16
  */
-@FeignClient(name = "dili-logger")
+@FeignClient(name = "dili-logger", contextId = "businessLogRpc")
 public interface BusinessLogRpc {
 
     /**
