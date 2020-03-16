@@ -166,6 +166,12 @@ public class ExceptionLogServiceImpl implements ExceptionLogService {
             if (StrUtil.isNotBlank(condition.getExceptionType())){
                 queryBuilder.must(QueryBuilders.termQuery("exceptionType", condition.getExceptionType()));
             }
+            if (Objects.nonNull(condition.getMarketId())) {
+                queryBuilder.must(QueryBuilders.termQuery("marketId", condition.getMarketId()));
+            }
+            if (CollectionUtil.isNotEmpty(condition.getMarketIdList())) {
+                queryBuilder.filter(QueryBuilders.termsQuery("marketId", condition.getMarketIdList()));
+            }
         }
         return queryBuilder;
     }

@@ -1,16 +1,13 @@
 package com.dili.logger.domain;
 
-import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 /**
  * <B>异常日志记录</B>
@@ -34,9 +31,4 @@ public class ExceptionLog extends BaseLog implements Serializable {
     @Field(type = FieldType.Keyword)
     private String exceptionType;
 
-    /**
-     * 服务器IP
-     */
-    @Field(type = FieldType.Ip)
-    private String ip;
 }

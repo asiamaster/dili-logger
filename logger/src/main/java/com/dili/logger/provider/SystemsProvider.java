@@ -1,6 +1,8 @@
 package com.dili.logger.provider;
 
 import com.dili.logger.service.remote.FirmRpcService;
+import com.dili.logger.service.remote.SystemRpcService;
+import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.dto.DTOUtils;
 import com.dili.ss.metadata.BatchProviderMeta;
 import com.dili.ss.metadata.FieldMeta;
@@ -8,37 +10,42 @@ import com.dili.ss.metadata.ValuePair;
 import com.dili.ss.metadata.ValuePairImpl;
 import com.dili.ss.metadata.provider.BatchDisplayTextProviderSupport;
 import com.dili.uap.sdk.domain.Firm;
+import com.dili.uap.sdk.domain.Systems;
 import com.dili.uap.sdk.domain.dto.FirmDto;
+import com.dili.uap.sdk.domain.dto.SystemDto;
+import com.dili.uap.sdk.rpc.SystemRpc;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
  * <B>Description</B>
- * <B>Copyright:本软件源代码版权归农丰时代所有,未经许可不得任意复制与传播.</B>
+ * <B>Copyright:本软件源代码版权归农丰时代科技有限公司及其团队所有,未经许可不得任意复制与传播.</B>
  * <B>农丰时代科技有限公司</B>
  *
  * @author yuehongbo
- * @date 2020/3/3 14:54
+ * @date 2020/3/13 16:28
  */
 @Component
 @Scope("prototype")
-public class MarketProvider extends BatchDisplayTextProviderSupport {
+public class SystemsProvider extends BatchDisplayTextProviderSupport {
 
     @Autowired
-    private FirmRpcService firmRpcService;
+    private SystemRpcService systemRpcService;
 
     @Override
     public List<ValuePair<?>> getLookupList(Object obj, Map metaMap, FieldMeta fieldMeta) {
-        List<Firm> firmList = firmRpcService.getCurrentUserFirms();
-        if (CollectionUtils.isNotEmpty(firmList)) {
-            //遍历数据，并默认升序
-            return firmList.stream().filter(Objects::nonNull).sorted(Comparator.comparing(Firm::getId)).map(f -> {
-                ValuePairImpl<?> vp = new ValuePairImpl<>(f.getName(), f.getId());
+        List<Systems> systemsList = systemRpcService.listByExample(DTOUtils.newInstance(SystemDto.class));
+        if (CollectionUtils.isNotEmpty(systemsList)) {
+            return systemsList.stream().filter(Objects::nonNull).map(s -> {
+                ValuePairImpl<?> vp = new ValuePairImpl<>(s.getName(), s.getCode());
                 return vp;
             }).collect(Collectors.toList());
         }
@@ -48,15 +55,14 @@ public class MarketProvider extends BatchDisplayTextProviderSupport {
     @Override
     protected List getFkList(List<String> relationIds, Map metaMap) {
         if (relationIds != null) {
-            List<Long> idList = relationIds.stream()
+            List<String> codeList = relationIds.stream()
                     .filter(Objects::nonNull)
                     .distinct()
-                    .map(t -> Long.valueOf(t))
                     .collect(Collectors.toList());
-            if (!idList.isEmpty()) {
-                FirmDto firmDto = DTOUtils.newDTO(FirmDto.class);
-                firmDto.setIdList(idList);
-                return firmRpcService.listByExample(firmDto);
+            if (!codeList.isEmpty()) {
+                SystemDto systemDto = DTOUtils.newDTO(SystemDto.class);
+                systemDto.setCodeList(codeList);
+                return systemRpcService.listByExample(systemDto);
             }
         }
         return null;
@@ -69,10 +75,8 @@ public class MarketProvider extends BatchDisplayTextProviderSupport {
         batchProviderMeta.setEscapeFiled("name");
         //忽略大小写关联
         batchProviderMeta.setIgnoreCaseToRef(true);
-        //主DTO与关联DTO的关联(java bean)属性(外键)
-        batchProviderMeta.setFkField("marketId");
         //关联(数据库)表的主键的字段名，默认取id
-        batchProviderMeta.setRelationTablePkField("id");
+        batchProviderMeta.setRelationTablePkField("code");
         //当未匹配到数据时，返回的值
         batchProviderMeta.setMismatchHandler(t -> "");
         return batchProviderMeta;

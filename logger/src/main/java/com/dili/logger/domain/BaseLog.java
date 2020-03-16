@@ -71,6 +71,12 @@ public class BaseLog implements Serializable {
     private String notes;
 
     /**
+     * 客户端请求IP
+     */
+    @Field(type = FieldType.Text, index = false)
+    private String remoteIp;
+
+    /**
      * 操作人ID
      */
     @Field(type = FieldType.Long)

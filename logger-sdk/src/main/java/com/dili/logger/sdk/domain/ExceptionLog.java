@@ -18,10 +18,6 @@ public class ExceptionLog extends BaseLog {
      */
     private String exceptionType;
 
-    /**
-     * 服务器IP
-     */
-    private String ip;
 
     public String getExceptionType() {
         return exceptionType;
@@ -29,14 +25,6 @@ public class ExceptionLog extends BaseLog {
 
     public void setExceptionType(String exceptionType) {
         this.exceptionType = exceptionType;
-    }
-
-    public String getIp() {
-        return ip;
-    }
-
-    public void setIp(String ip) {
-        this.ip = ip;
     }
 
 }

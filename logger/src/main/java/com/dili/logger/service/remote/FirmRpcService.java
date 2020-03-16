@@ -1,6 +1,6 @@
 package com.dili.logger.service.remote;
 
-import com.alibaba.fastjson.JSONObject;
+import cn.hutool.core.collection.CollectionUtil;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.dto.DTOUtils;
 import com.dili.uap.sdk.domain.Firm;
@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * <B>Description</B>
@@ -113,7 +112,7 @@ public class FirmRpcService {
         UserDataAuth userDataAuth = DTOUtils.newDTO(UserDataAuth.class);
         if (null == userId) {
             UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
-            if (null == userTicket){
+            if (null == userTicket) {
                 return Collections.emptyList();
             }
             userDataAuth.setUserId(SessionContext.getSessionContext().getUserTicket().getId());
@@ -122,17 +121,17 @@ public class FirmRpcService {
         }
         userDataAuth.setRefCode(DataAuthType.MARKET.getCode());
         BaseOutput<List<Map>> out = dataAuthRpc.listUserDataAuthDetail(userDataAuth);
-        if (out.isSuccess()) {
-            Stream<Firm> stream = out.getData().stream().flatMap(m -> m.values().stream())
-                    .map(json -> {
-                                JSONObject obj = (JSONObject) json;
-                                Firm firm = DTOUtils.newDTO(Firm.class);
-                                firm.setCode(String.valueOf(obj.get("code")));
-                                firm.setName(String.valueOf(obj.get("name")));
-                                return firm;
-                            }
-                    );
-            return stream.collect(Collectors.toList());
+        if (out.isSuccess() && CollectionUtil.isNotEmpty(out.getData())) {
+
+            List<String> firmCodeList = (List<String>) out.getData().stream().flatMap(m -> m.keySet().stream()).collect(Collectors.toList());
+            FirmDto firmDto = DTOUtils.newInstance(FirmDto.class);
+            firmDto.setCodes(firmCodeList);
+            BaseOutput<List<Firm>> listBaseOutput = firmRpc.listByExample(firmDto);
+            if (listBaseOutput.isSuccess() && CollectionUtil.isNotEmpty(listBaseOutput.getData())) {
+                return listBaseOutput.getData();
+            } else {
+                return Collections.emptyList();
+            }
         } else {
             return Collections.emptyList();
         }

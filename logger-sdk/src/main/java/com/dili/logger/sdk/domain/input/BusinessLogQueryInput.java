@@ -8,6 +8,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -36,6 +37,11 @@ public class BusinessLogQueryInput extends BusinessLog implements Serializable {
     @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createTimeEnd;
 
+    /**
+     * 所属市场集合
+     */
+    private List<Long> marketIdList;
+
     public LocalDateTime getCreateTimeStart() {
         return createTimeStart;
     }
@@ -47,5 +53,12 @@ public class BusinessLogQueryInput extends BusinessLog implements Serializable {
     }
     public void setCreateTimeEnd(LocalDateTime createTimeEnd) {
         this.createTimeEnd = createTimeEnd;
+    }
+
+    public List<Long> getMarketIdList() {
+        return marketIdList;
+    }
+    public void setMarketIdList(List<Long> marketIdList) {
+        this.marketIdList = marketIdList;
     }
 }

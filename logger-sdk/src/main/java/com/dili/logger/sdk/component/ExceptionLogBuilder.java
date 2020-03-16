@@ -33,7 +33,7 @@ public class ExceptionLogBuilder implements LogBuilder {
             exceptionLog.setExceptionType(LoggerContext.get(LoggerConstant.LOG_EXCEPTION_TYPE_KEY).toString());
         }
         if(LoggerContext.get(LoggerConstant.LOG_IP_KEY) != null){
-            exceptionLog.setIp(LoggerContext.get(LoggerConstant.LOG_IP_KEY).toString());
+            exceptionLog.setRemoteIp(LoggerContext.get(LoggerConstant.LOG_IP_KEY).toString());
         }
         return exceptionLog;
     }

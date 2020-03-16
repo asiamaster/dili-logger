@@ -27,7 +27,7 @@ public interface LoggerConstant {
     static final String LOG_EXCEPTION_TYPE_KEY = "log_exception_type_key";
 
     /**
-     * 异常服务器ip key
+     * 异常客户端ip key
      */
     static final String LOG_IP_KEY = "log_ip_key";
 }

@@ -1,5 +1,6 @@
 package com.dili.logger.aop;
 
+import cn.hutool.core.util.StrUtil;
 import com.dili.ss.domain.BaseOutput;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -44,6 +45,11 @@ public class CrossAspect {
         HttpServletRequest request = ((ServletRequestAttributes) (RequestContextHolder.currentRequestAttributes())).getRequest();
         String referer = request.getHeader("Referer");
         String requestOrigin = request.getHeader("Origin");
+        Boolean allowed = false;
+        if (StrUtil.isBlank(requestOrigin)) {
+            log.warn("已拦截源地址[{}]的调用日志请求,获取到的请求域[Origin]为空", referer);
+            return BaseOutput.failure("未获取到请求域");
+        }
         int end = requestOrigin.indexOf(".com");
         if (end < 0) {
             log.warn("已拦截源地址[{}]的调用日志请求", referer);
@@ -51,7 +57,7 @@ public class CrossAspect {
         }
         requestOrigin = requestOrigin.substring(0, end + 4);
         AntPathMatcher pathMatcher = new AntPathMatcher();
-        Boolean allowed = false;
+
         for (String allowedOrigin : allowedOrigins) {
             //推荐方式:正则  注意(CrossOrigin(origins = {"*.abc.com"}) ) 主域会匹配主域+子域   origins = {"*.pay.abc.com"} 子域名只会匹配子域
             if (pathMatcher.isPattern(allowedOrigin) && pathMatcher.match(allowedOrigin, requestOrigin)) {

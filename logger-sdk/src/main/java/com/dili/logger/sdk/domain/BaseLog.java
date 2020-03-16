@@ -65,10 +65,16 @@ public class BaseLog extends BaseDomain implements Serializable {
      */
     private LocalDateTime createTime;
 
+    /**
+     * 客户端请求IP
+     */
+    private String remoteIp;
+
+    @Override
     public Long getId() {
         return id;
     }
-
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
@@ -144,5 +150,13 @@ public class BaseLog extends BaseDomain implements Serializable {
 
     public void setCreateTime(LocalDateTime createTime) {
         this.createTime = createTime;
+    }
+
+    public String getRemoteIp() {
+        return remoteIp;
+    }
+
+    public void setRemoteIp(String remoteIp) {
+        this.remoteIp = remoteIp;
     }
 }

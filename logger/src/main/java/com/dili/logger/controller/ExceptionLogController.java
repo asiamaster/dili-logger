@@ -1,14 +1,14 @@
 package com.dili.logger.controller;
 
-import com.dili.logger.domain.BusinessLog;
+import cn.hutool.core.collection.CollectionUtil;
 import com.dili.logger.domain.ExceptionLog;
-import com.dili.logger.sdk.domain.input.BusinessLogQueryInput;
 import com.dili.logger.sdk.domain.input.ExceptionLogQueryInput;
-import com.dili.logger.service.BusinessLogService;
 import com.dili.logger.service.ExceptionLogService;
+import com.dili.logger.service.remote.FirmRpcService;
 import com.dili.ss.domain.EasyuiPageOutput;
 import com.dili.ss.domain.PageOutput;
 import com.dili.ss.metadata.ValueProviderUtils;
+import com.dili.uap.sdk.domain.Firm;
 import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,7 +17,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * <B>Description</B>
@@ -33,6 +36,9 @@ public class ExceptionLogController {
 
     @Autowired
     private ExceptionLogService exceptionLogService;
+
+    @Autowired
+    private FirmRpcService firmRpcService;
 
     /**
      * 跳转到个人客户管理页面
@@ -54,6 +60,15 @@ public class ExceptionLogController {
     @RequestMapping(value = "/listPage.action", method = {RequestMethod.POST})
     @ResponseBody
     public String listPage(ExceptionLogQueryInput condition) throws Exception {
+        if (Objects.isNull(condition.getMarketId())) {
+            List<Firm> userFirms = firmRpcService.getCurrentUserFirms();
+            if (CollectionUtil.isEmpty(userFirms)) {
+                return new EasyuiPageOutput(0, Collections.emptyList()).toString();
+            } else {
+                List<Long> idList = userFirms.stream().map(Firm::getId).collect(Collectors.toList());
+                condition.setMarketIdList(idList);
+            }
+        }
         PageOutput<List<ExceptionLog>> pageOutput = exceptionLogService.searchPage(condition);
         List<ExceptionLog> operationLogList = pageOutput.getData();
         if (null == operationLogList) {
