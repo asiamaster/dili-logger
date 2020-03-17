@@ -8,7 +8,6 @@ import com.dili.logger.sdk.boot.LoggerRabbitConfiguration;
 import com.dili.logger.sdk.boot.LoggerRabbitProducerConfiguration;
 import com.dili.logger.sdk.domain.BusinessLog;
 import com.dili.logger.sdk.dto.CorrelationDataExt;
-import com.dili.logger.sdk.glossary.LoggerConstant;
 import com.dili.ss.dto.IDTO;
 import com.dili.ss.exception.ParamErrorException;
 import com.dili.ss.util.BeanConver;
@@ -32,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -133,18 +133,24 @@ public class LoggerAspect {
         Template template = groupTemplate.getTemplate(templateStr);
         Map<String, Object> params = getParameterMap(request);
 
-        if(LoggerContext.get(LoggerConstant.LOG_BUSINESS_CODE_KEY) != null){
-            params.put("businessCode", LoggerContext.get(LoggerConstant.LOG_BUSINESS_CODE_KEY).toString());
+//        if(LoggerContext.get(LoggerConstant.LOG_BUSINESS_CODE_KEY) != null){
+//            params.put("businessCode", LoggerContext.get(LoggerConstant.LOG_BUSINESS_CODE_KEY).toString());
+//        }
+//        if(LoggerContext.get(LoggerConstant.LOG_BUSINESS_ID_KEY) != null){
+//            params.put("businessId", LoggerContext.get(LoggerConstant.LOG_BUSINESS_ID_KEY).toString());
+//        }
+//        if(LoggerContext.get(LoggerConstant.LOG_OPERATOR_ID_KEY) != null){
+//            params.put("operatorId", LoggerContext.get(LoggerConstant.LOG_OPERATOR_ID_KEY).toString());
+//        }
+//        if(LoggerContext.get(LoggerConstant.LOG_MARKET_ID_KEY) != null){
+//            params.put("marketId", LoggerContext.get(LoggerConstant.LOG_MARKET_ID_KEY).toString());
+//        }
+
+        Map<String, Object> all = LoggerContext.getAll();
+        if (!CollectionUtils.isEmpty(all)) {
+            params.putAll(all);
         }
-        if(LoggerContext.get(LoggerConstant.LOG_BUSINESS_ID_KEY) != null){
-            params.put("businessId", LoggerContext.get(LoggerConstant.LOG_BUSINESS_ID_KEY).toString());
-        }
-        if(LoggerContext.get(LoggerConstant.LOG_OPERATOR_ID_KEY) != null){
-            params.put("operatorId", LoggerContext.get(LoggerConstant.LOG_OPERATOR_ID_KEY).toString());
-        }
-        if(LoggerContext.get(LoggerConstant.LOG_MARKET_ID_KEY) != null){
-            params.put("marketId", LoggerContext.get(LoggerConstant.LOG_MARKET_ID_KEY).toString());
-        }
+
         try {
             //获取模板绑定变量
             params.putAll(getBindingMap(parameterAnnotations, parameterTypes, args));

@@ -4,7 +4,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 /**
  * 日志上下文
@@ -51,6 +50,10 @@ public class LoggerContext {
             return null;
         }
         return map.get(key);
+    }
+
+    public static Map<String,Object> getAll(){
+        return local.get();
     }
 
     public static void clean() {
