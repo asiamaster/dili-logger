@@ -106,13 +106,17 @@ public class LoggerAspect {
             e.printStackTrace();
         }
         businessLog.setBusinessType(businessLogger.businessType());
-        businessLog.setOperationType(businessLogger.operationType());
+        //如果未显示的给操作类型赋值，则从注解中再拿取一次
+        if (StringUtils.isBlank(businessLog.getOperationType())) {
+            businessLog.setOperationType(businessLogger.operationType());
+        }
         businessLog.setContent(businessLogger.content());
         businessLog.setNotes(businessLogger.notes());
         businessLog.setSystemCode(businessLogger.systemCode());
         businessLog.setOperatorId(businessLog.getOperatorId());
         businessLog.setMarketId(businessLog.getMarketId());
         businessLog.setCreateTime(LocalDateTime.now());
+        businessLog.setRemoteIp(businessLog.getRemoteIp());
         return businessLog;
     }
 

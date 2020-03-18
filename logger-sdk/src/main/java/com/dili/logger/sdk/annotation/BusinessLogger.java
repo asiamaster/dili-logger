@@ -23,7 +23,7 @@ public @interface BusinessLogger {
      * 业务类型
      * @return
      */
-    String operationType();
+    String operationType() default "";
 
     /**
      * 日志内容，支持beetl模板
@@ -54,5 +54,11 @@ public @interface BusinessLogger {
      * @return
      */
     String notes() default "";
+
+    /**
+     * 远程客户端IP
+     * @return
+     */
+    String remoteIp() default "";
 
 }

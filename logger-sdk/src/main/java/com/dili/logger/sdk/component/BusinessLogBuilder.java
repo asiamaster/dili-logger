@@ -23,17 +23,23 @@ public class BusinessLogBuilder implements LogBuilder {
     @Override
     public BaseLog build(Method method, Object[] args) {
         BusinessLog businessLog = new BusinessLog();
-        if(LoggerContext.get(LoggerConstant.LOG_OPERATOR_ID_KEY) != null){
-            businessLog.setOperatorId((Long)LoggerContext.get(LoggerConstant.LOG_OPERATOR_ID_KEY));
+        if (LoggerContext.get(LoggerConstant.LOG_OPERATOR_ID_KEY) != null) {
+            businessLog.setOperatorId((Long) LoggerContext.get(LoggerConstant.LOG_OPERATOR_ID_KEY));
         }
-        if(LoggerContext.get(LoggerConstant.LOG_MARKET_ID_KEY) != null){
-            businessLog.setMarketId((Long)LoggerContext.get(LoggerConstant.LOG_MARKET_ID_KEY));
+        if (LoggerContext.get(LoggerConstant.LOG_MARKET_ID_KEY) != null) {
+            businessLog.setMarketId((Long) LoggerContext.get(LoggerConstant.LOG_MARKET_ID_KEY));
         }
-        if(LoggerContext.get(LoggerConstant.LOG_BUSINESS_CODE_KEY) != null){
+        if (LoggerContext.get(LoggerConstant.LOG_BUSINESS_CODE_KEY) != null) {
             businessLog.setBusinessCode(LoggerContext.get(LoggerConstant.LOG_BUSINESS_CODE_KEY).toString());
         }
-        if(LoggerContext.get(LoggerConstant.LOG_BUSINESS_ID_KEY) != null){
-            businessLog.setBusinessId((Long)LoggerContext.get(LoggerConstant.LOG_BUSINESS_ID_KEY));
+        if (LoggerContext.get(LoggerConstant.LOG_BUSINESS_ID_KEY) != null) {
+            businessLog.setBusinessId((Long) LoggerContext.get(LoggerConstant.LOG_BUSINESS_ID_KEY));
+        }
+        if (LoggerContext.get(LoggerConstant.LOG_IP_KEY) != null) {
+            businessLog.setRemoteIp(LoggerContext.get(LoggerConstant.LOG_IP_KEY).toString());
+        }
+        if (LoggerContext.get(LoggerConstant.LOG_BUSINESS_OPERATION_TYPE_KEY) != null) {
+            businessLog.setOperationType(LoggerContext.get(LoggerConstant.LOG_BUSINESS_OPERATION_TYPE_KEY).toString());
         }
         return businessLog;
     }
