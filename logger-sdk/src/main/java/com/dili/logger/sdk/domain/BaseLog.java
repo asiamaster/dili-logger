@@ -61,6 +61,11 @@ public class BaseLog extends BaseDomain implements Serializable {
     private Long operatorId;
 
     /**
+     * 操作人姓名
+     */
+    private Long operatorName;
+
+    /**
      * 日志时间
      */
     private LocalDateTime createTime;
@@ -141,6 +146,14 @@ public class BaseLog extends BaseDomain implements Serializable {
 
     public void setOperatorId(Long operatorId) {
         this.operatorId = operatorId;
+    }
+
+    public Long getOperatorName() {
+        return operatorName;
+    }
+
+    public void setOperatorName(Long operatorName) {
+        this.operatorName = operatorName;
     }
 
     @JSONField(format = "yyyy-MM-dd HH:mm:ss")
