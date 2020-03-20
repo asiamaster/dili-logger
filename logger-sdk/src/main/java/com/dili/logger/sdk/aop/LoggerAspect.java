@@ -135,20 +135,8 @@ public class LoggerAspect {
             return null;
         }
         Template template = groupTemplate.getTemplate(templateStr);
+        //获取http请求参数
         Map<String, Object> params = getParameterMap(request);
-
-//        if(LoggerContext.get(LoggerConstant.LOG_BUSINESS_CODE_KEY) != null){
-//            params.put("businessCode", LoggerContext.get(LoggerConstant.LOG_BUSINESS_CODE_KEY).toString());
-//        }
-//        if(LoggerContext.get(LoggerConstant.LOG_BUSINESS_ID_KEY) != null){
-//            params.put("businessId", LoggerContext.get(LoggerConstant.LOG_BUSINESS_ID_KEY).toString());
-//        }
-//        if(LoggerContext.get(LoggerConstant.LOG_OPERATOR_ID_KEY) != null){
-//            params.put("operatorId", LoggerContext.get(LoggerConstant.LOG_OPERATOR_ID_KEY).toString());
-//        }
-//        if(LoggerContext.get(LoggerConstant.LOG_MARKET_ID_KEY) != null){
-//            params.put("marketId", LoggerContext.get(LoggerConstant.LOG_MARKET_ID_KEY).toString());
-//        }
 
         Map<String, Object> all = LoggerContext.getAll();
         if (!CollectionUtils.isEmpty(all)) {

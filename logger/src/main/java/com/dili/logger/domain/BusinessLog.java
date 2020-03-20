@@ -35,9 +35,9 @@ public class BusinessLog extends BaseLog implements Serializable {
     private String operationType;
 
     /**
-     * 冗余存储操作类型的值
+     * 冗余存储操作类型的显示值
      */
     @Field(type = FieldType.Text, index = false)
-    private String operationTypeValue;
+    private String operationTypeText;
 
 }

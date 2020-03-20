@@ -4,7 +4,7 @@ import com.dili.logger.sdk.base.LogBuilder;
 import com.dili.logger.sdk.base.LoggerContext;
 import com.dili.logger.sdk.domain.BaseLog;
 import com.dili.logger.sdk.domain.ExceptionLog;
-import com.dili.logger.sdk.glossary.LoggerConstant;
+import com.dili.ss.util.BeanConver;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
@@ -22,19 +22,6 @@ public class ExceptionLogBuilder implements LogBuilder {
 
     @Override
     public BaseLog build(Method method, Object[] args) {
-        ExceptionLog exceptionLog = new ExceptionLog();
-        if(LoggerContext.get(LoggerConstant.LOG_OPERATOR_ID_KEY) != null){
-            exceptionLog.setOperatorId((Long)LoggerContext.get(LoggerConstant.LOG_OPERATOR_ID_KEY));
-        }
-        if(LoggerContext.get(LoggerConstant.LOG_MARKET_ID_KEY) != null){
-            exceptionLog.setMarketId((Long)LoggerContext.get(LoggerConstant.LOG_MARKET_ID_KEY));
-        }
-        if(LoggerContext.get(LoggerConstant.LOG_EXCEPTION_TYPE_KEY) != null){
-            exceptionLog.setExceptionType(LoggerContext.get(LoggerConstant.LOG_EXCEPTION_TYPE_KEY).toString());
-        }
-        if(LoggerContext.get(LoggerConstant.LOG_IP_KEY) != null){
-            exceptionLog.setRemoteIp(LoggerContext.get(LoggerConstant.LOG_IP_KEY).toString());
-        }
-        return exceptionLog;
+        return BeanConver.copyMap(LoggerContext.getAll(), ExceptionLog.class);
     }
 }

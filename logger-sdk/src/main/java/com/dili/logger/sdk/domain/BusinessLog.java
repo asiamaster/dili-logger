@@ -18,9 +18,9 @@ public class BusinessLog extends BaseLog {
     private String operationType;
 
     /**
-     * 操作类型的值
+     * 操作类型的显示值
      */
-    private String operationTypeValue;
+    private String operationTypeText;
 
     public String getOperationType() {
         return operationType;
@@ -30,11 +30,11 @@ public class BusinessLog extends BaseLog {
         this.operationType = operationType;
     }
 
-    public String getOperationTypeValue() {
-        return operationTypeValue;
+    public String getOperationTypeText() {
+        return operationTypeText;
     }
 
-    public void setOperationTypeValue(String operationTypeValue) {
-        this.operationTypeValue = operationTypeValue;
+    public void setOperationTypeText(String operationTypeText) {
+        this.operationTypeText = operationTypeText;
     }
 }

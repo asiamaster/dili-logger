@@ -33,6 +33,16 @@ spring.rabbitmq.publisher-returns=true
 
 # 4. 注解使用
 ```
+    /**
+     * 获取模板绑定变量
+     * 先取@RequestParam注解，没有注解取Map或DTO的字段，List没有注解默认key为list
+     * 没有注解，又不是Map,List或DTO， 直接按参数顺序为key，如args[0],args[1]
+     * @param parameterAnnotations
+     * @param parameterTypes
+     * @param args
+     * @return
+     * @throws Exception
+     */
     @RequestMapping(value="/update.action", method = {RequestMethod.GET, RequestMethod.POST})
     @BusinessLogger(businessType="test", content="业务类型编号:${businessCode}，业务id:${businessId},用户id:${operatorId}, 市场id:${marketId}，公司名:${name}。", operationType="edit", notes = "备注", systemCode = "UAP")
     public @ResponseBody BaseOutput update(Firm firm) {
