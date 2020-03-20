@@ -13,6 +13,7 @@ import com.dili.ss.exception.ParamErrorException;
 import com.dili.ss.util.BeanConver;
 import com.dili.ss.util.SpringUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.ss.formula.functions.T;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -111,12 +112,15 @@ public class LoggerAspect {
             businessLog.setOperationType(businessLogger.operationType());
         }
         businessLog.setContent(businessLogger.content());
-        businessLog.setNotes(businessLogger.notes());
-        businessLog.setSystemCode(businessLogger.systemCode());
-        businessLog.setOperatorId(businessLog.getOperatorId());
-        businessLog.setMarketId(businessLog.getMarketId());
-        businessLog.setCreateTime(LocalDateTime.now());
-        businessLog.setRemoteIp(businessLog.getRemoteIp());
+        if(StringUtils.isNotBlank(businessLog.getNotes())) {
+            businessLog.setNotes(businessLogger.notes());
+        }
+        if(StringUtils.isNotBlank(businessLog.getSystemCode())) {
+            businessLog.setSystemCode(businessLogger.systemCode());
+        }
+        if(businessLog.getCreateTime() == null) {
+            businessLog.setCreateTime(LocalDateTime.now());
+        }
         return businessLog;
     }
 
