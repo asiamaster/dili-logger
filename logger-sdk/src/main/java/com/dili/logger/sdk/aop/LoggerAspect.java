@@ -79,10 +79,10 @@ public class LoggerAspect {
         //先执行方法
         Object retValue = point.proceed();
         try {
-            BusinessLog businessLog = getBusinessLog(point);
-            String content = getBeetlContent(method, point.getArgs(), request, businessLog.getContent());
-            businessLog.setContent(content);
-            sendMsg(LoggerRabbitConfiguration.LOGGER_TOPIC_EXCHANGE, LoggerRabbitConfiguration.LOGGER_ADD_BUSINESS_KEY, JSON.toJSONString(businessLog));
+//            BusinessLog businessLog = getBusinessLog(point);
+//            String content = getBeetlContent(method, point.getArgs(), request, businessLog.getContent());
+//            businessLog.setContent(content);
+            sendMsg(LoggerRabbitConfiguration.LOGGER_TOPIC_EXCHANGE, LoggerRabbitConfiguration.LOGGER_ADD_BUSINESS_KEY, JSON.toJSONString(getBusinessLog(point)));
         }catch (Exception e){
             LOGGER.error(e.getMessage());
         }
@@ -111,7 +111,7 @@ public class LoggerAspect {
         if (StringUtils.isBlank(businessLog.getOperationType())) {
             businessLog.setOperationType(businessLogger.operationType());
         }
-        businessLog.setContent(businessLogger.content());
+        businessLog.setContent(getBeetlContent(method, point.getArgs(), LoggerContext.getRequest(), businessLogger.content()));
         if(StringUtils.isNotBlank(businessLog.getNotes())) {
             businessLog.setNotes(businessLogger.notes());
         }
