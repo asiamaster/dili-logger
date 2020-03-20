@@ -112,10 +112,10 @@ public class LoggerAspect {
             businessLog.setOperationType(businessLogger.operationType());
         }
         businessLog.setContent(getBeetlContent(method, point.getArgs(), LoggerContext.getRequest(), businessLogger.content()));
-        if(StringUtils.isNotBlank(businessLog.getNotes())) {
+        if(StringUtils.isBlank(businessLog.getNotes())) {
             businessLog.setNotes(businessLogger.notes());
         }
-        if(StringUtils.isNotBlank(businessLog.getSystemCode())) {
+        if(StringUtils.isBlank(businessLog.getSystemCode())) {
             businessLog.setSystemCode(businessLogger.systemCode());
         }
         if(businessLog.getCreateTime() == null) {

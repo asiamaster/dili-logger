@@ -86,7 +86,7 @@ public class BaseLog implements Serializable {
      * 操作人姓名
      */
     @Field(type = FieldType.Text,index = false)
-    private Long operatorName;
+    private String operatorName;
 
     /**
      * 日志时间

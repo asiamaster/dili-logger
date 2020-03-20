@@ -1,16 +1,13 @@
 package com.dili.logger.domain;
 
-import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 /**
  * <B>Description</B>
@@ -31,7 +28,7 @@ public class BusinessLog extends BaseLog implements Serializable {
     /**
      * 操作类型
      */
-    @Field(type = FieldType.Text)
+    @Field(type = FieldType.Keyword)
     private String operationType;
 
     /**
