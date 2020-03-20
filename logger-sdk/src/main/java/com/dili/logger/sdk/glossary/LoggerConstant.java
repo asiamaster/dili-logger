@@ -20,12 +20,18 @@ public interface LoggerConstant {
      * 日志业务编码 key
      */
     String LOG_BUSINESS_CODE_KEY = "businessCode";
-
     /**
      * 日志业务id key
      */
     String LOG_BUSINESS_ID_KEY = "businessId";
-
+    /**
+     * 业务日志操作类型 key
+     */
+    String LOG_OPERATION_TYPE_KEY = "operationType";
+    /**
+     * 业务日志操作类型描述 key
+     */
+    String LOG_OPERATION_TYPE_TEXT_KEY = "operationTypeText";
     /**
      * 异常类型 key
      */
