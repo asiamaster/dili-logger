@@ -8,12 +8,12 @@ import com.dili.logger.sdk.boot.LoggerRabbitConfiguration;
 import com.dili.logger.sdk.boot.LoggerRabbitProducerConfiguration;
 import com.dili.logger.sdk.domain.BusinessLog;
 import com.dili.logger.sdk.dto.CorrelationDataExt;
+import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.dto.IDTO;
 import com.dili.ss.exception.ParamErrorException;
 import com.dili.ss.util.BeanConver;
 import com.dili.ss.util.SpringUtil;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.ss.formula.functions.T;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -76,17 +76,21 @@ public class LoggerAspect {
         LoggerContext.resetLocal();
         HttpServletRequest request = ((ServletRequestAttributes) (RequestContextHolder.currentRequestAttributes())).getRequest();
         LoggerContext.put(request);
-        //先执行方法
-        Object retValue = point.proceed();
+
         try {
-//            BusinessLog businessLog = getBusinessLog(point);
-//            String content = getBeetlContent(method, point.getArgs(), request, businessLog.getContent());
-//            businessLog.setContent(content);
+            //先执行方法
+            Object retValue = point.proceed();
+            //如果是BaseOutput.failure()，则不输出日志
+            if(retValue instanceof BaseOutput && !((BaseOutput)retValue).isSuccess()){
+                return retValue;
+            }
             sendMsg(LoggerRabbitConfiguration.LOGGER_TOPIC_EXCHANGE, LoggerRabbitConfiguration.LOGGER_ADD_BUSINESS_KEY, JSON.toJSONString(getBusinessLog(point)));
+            return retValue;
         }catch (Exception e){
             LOGGER.error(e.getMessage());
+            return null;
         }
-        return retValue;
+
     }
 
     /**
