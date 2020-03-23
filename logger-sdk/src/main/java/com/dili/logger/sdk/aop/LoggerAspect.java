@@ -72,7 +72,7 @@ public class LoggerAspect {
      */
     @Around( "@annotation(com.dili.logger.sdk.annotation.BusinessLogger)")
     public Object businessLogAround(ProceedingJoinPoint point) throws Throwable {
-        Method method = ((MethodSignature) point.getSignature()).getMethod();
+//        Method method = ((MethodSignature) point.getSignature()).getMethod();
         LoggerContext.resetLocal();
         HttpServletRequest request = ((ServletRequestAttributes) (RequestContextHolder.currentRequestAttributes())).getRequest();
         LoggerContext.put(request);
