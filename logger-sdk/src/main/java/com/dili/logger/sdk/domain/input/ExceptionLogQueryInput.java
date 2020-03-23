@@ -8,6 +8,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 /**
  * <B>Description</B>
@@ -38,7 +39,7 @@ public class ExceptionLogQueryInput extends ExceptionLog implements Serializable
     /**
      * 所属市场集合
      */
-    private List<Long> marketIdList;
+    private Set<Long> marketIdSet;
 
     public LocalDateTime getCreateTimeStart() {
         return createTimeStart;
@@ -52,10 +53,10 @@ public class ExceptionLogQueryInput extends ExceptionLog implements Serializable
     public void setCreateTimeEnd(LocalDateTime createTimeEnd) {
         this.createTimeEnd = createTimeEnd;
     }
-    public List<Long> getMarketIdList() {
-        return marketIdList;
+    public Set<Long> getMarketIdSet() {
+        return marketIdSet;
     }
-    public void setMarketIdList(List<Long> marketIdList) {
-        this.marketIdList = marketIdList;
+    public void setMarketIdSet(Set<Long> marketIdSet) {
+        this.marketIdSet = marketIdSet;
     }
 }

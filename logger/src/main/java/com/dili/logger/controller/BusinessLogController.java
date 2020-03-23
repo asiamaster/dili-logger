@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -66,8 +67,8 @@ public class BusinessLogController {
             if (CollectionUtil.isEmpty(userFirms)) {
                 return new EasyuiPageOutput(0, Collections.emptyList()).toString();
             } else {
-                List<Long> idList = userFirms.stream().map(Firm::getId).collect(Collectors.toList());
-                condition.setMarketIdList(idList);
+                Set<Long> idSet = userFirms.stream().map(Firm::getId).collect(Collectors.toSet());
+                condition.setMarketIdSet(idSet);
             }
         }
         PageOutput<List<BusinessLog>> pageOutput = businessLogService.searchPage(condition);

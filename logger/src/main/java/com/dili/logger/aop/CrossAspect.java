@@ -41,7 +41,7 @@ public class CrossAspect {
      * @throws Throwable
      */
     @Around("@annotation(org.springframework.web.bind.annotation.CrossOrigin)")
-    public Object businessLogAround(ProceedingJoinPoint point) throws Throwable {
+    public Object crossOriginLogAround(ProceedingJoinPoint point) throws Throwable {
         HttpServletRequest request = ((ServletRequestAttributes) (RequestContextHolder.currentRequestAttributes())).getRequest();
         String referer = request.getHeader("Referer");
         String requestOrigin = request.getHeader("Origin");

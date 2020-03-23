@@ -122,7 +122,6 @@ public class FirmRpcService {
         userDataAuth.setRefCode(DataAuthType.MARKET.getCode());
         BaseOutput<List<Map>> out = dataAuthRpc.listUserDataAuthDetail(userDataAuth);
         if (out.isSuccess() && CollectionUtil.isNotEmpty(out.getData())) {
-
             List<String> firmCodeList = (List<String>) out.getData().stream().flatMap(m -> m.keySet().stream()).collect(Collectors.toList());
             FirmDto firmDto = DTOUtils.newInstance(FirmDto.class);
             firmDto.setCodes(firmCodeList);

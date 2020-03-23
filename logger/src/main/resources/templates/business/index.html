@@ -158,7 +158,11 @@
      * @param index
      */
     function contentFormatTip(value,row,index) {
-        return '<span title="' + value + '">' + value + '</span>';
+        if (value) {
+            return '<span title="' + value + '">' + value + '</span>';
+        } else {
+            return "";
+        }
     }
 </script>
 
