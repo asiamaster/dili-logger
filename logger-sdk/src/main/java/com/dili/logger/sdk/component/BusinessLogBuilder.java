@@ -4,6 +4,7 @@ import com.dili.logger.sdk.base.LogBuilder;
 import com.dili.logger.sdk.base.LoggerContext;
 import com.dili.logger.sdk.domain.BaseLog;
 import com.dili.logger.sdk.domain.BusinessLog;
+import com.dili.ss.mvc.util.RequestUtils;
 import com.dili.ss.util.BeanConver;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -22,7 +23,9 @@ public class BusinessLogBuilder implements LogBuilder {
 
     @Override
     public BaseLog build(Method method, Object[] args) {
-        return BeanConver.copyMap(LoggerContext.getAll(), BusinessLog.class);
+        BusinessLog businessLog = BeanConver.copyMap(LoggerContext.getAll(), BusinessLog.class);
+        businessLog.setRemoteIp(RequestUtils.getIpAddress(LoggerContext.getRequest()));
+        return businessLog;
     }
 
 }
