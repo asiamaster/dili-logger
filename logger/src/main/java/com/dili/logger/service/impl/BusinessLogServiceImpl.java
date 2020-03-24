@@ -154,10 +154,10 @@ public class BusinessLogServiceImpl implements BusinessLogService<BusinessLog> {
                 queryBuilder.must(QueryBuilders.termQuery("businessType", condition.getBusinessType()));
             }
             if (Objects.nonNull(condition.getCreateTimeStart())) {
-                queryBuilder.must(QueryBuilders.rangeQuery("createTime").gte(condition.getCreateTimeStart()));
+                queryBuilder.filter(QueryBuilders.rangeQuery("createTime").gte(condition.getCreateTimeStart()));
             }
             if (Objects.nonNull(condition.getCreateTimeEnd())) {
-                queryBuilder.must(QueryBuilders.rangeQuery("createTime").lte(condition.getCreateTimeEnd()));
+                queryBuilder.filter(QueryBuilders.rangeQuery("createTime").lte(condition.getCreateTimeEnd()));
             }
             if (StrUtil.isNotBlank(condition.getBusinessCode())){
                 queryBuilder.must(QueryBuilders.termQuery("businessCode", condition.getBusinessCode()));
