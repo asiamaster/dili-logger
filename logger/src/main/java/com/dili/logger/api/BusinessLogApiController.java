@@ -1,14 +1,22 @@
 package com.dili.logger.api;
 
+import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.StrUtil;
 import com.dili.logger.domain.BusinessLog;
 import com.dili.logger.sdk.domain.input.BusinessLogQueryInput;
 import com.dili.logger.service.BusinessLogService;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.PageOutput;
+import com.dili.ss.mvc.util.RequestUtils;
+import com.dili.ss.sid.util.IdUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpRequest;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * <B>Description</B>
@@ -33,7 +41,13 @@ public class BusinessLogApiController {
      */
     @CrossOrigin(origins = {"*"})
     @RequestMapping(value = "/save",method = {RequestMethod.POST})
-    public BaseOutput save(@RequestBody BusinessLog condition) {
+    public BaseOutput save(@RequestBody BusinessLog condition, HttpServletRequest httpServletRequest) {
+        if (StrUtil.isBlank(condition.getRemoteIp())) {
+            condition.setRemoteIp(RequestUtils.getIpAddress(httpServletRequest));
+        }
+        if (StrUtil.isBlank(condition.getServerIp())) {
+            condition.setServerIp(httpServletRequest.getLocalAddr());
+        }
         businessLogService.save(condition);
         return BaseOutput.success();
     }
@@ -45,7 +59,19 @@ public class BusinessLogApiController {
      */
     @CrossOrigin(origins = {"*"})
     @RequestMapping(value = "/batchSave",method = {RequestMethod.POST})
-    public BaseOutput batchSave(@RequestBody List<BusinessLog> businessLogList) {
+    public BaseOutput batchSave(@RequestBody List<BusinessLog> businessLogList,HttpServletRequest httpServletRequest) {
+        String remoteIp = RequestUtils.getIpAddress(httpServletRequest);
+        String serverIp = httpServletRequest.getLocalAddr();
+        if (CollectionUtil.isNotEmpty(businessLogList)) {
+            businessLogList.forEach(l -> {
+                if (StrUtil.isBlank(l.getRemoteIp())) {
+                    l.setRemoteIp(remoteIp);
+                }
+                if (StrUtil.isBlank(l.getServerIp())) {
+                    l.setServerIp(serverIp);
+                }
+            });
+        }
         businessLogService.batchSave(businessLogList);
         return BaseOutput.success();
     }

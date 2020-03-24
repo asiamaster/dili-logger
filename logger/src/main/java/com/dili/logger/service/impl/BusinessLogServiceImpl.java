@@ -7,6 +7,7 @@ import com.dili.logger.domain.BusinessLog;
 import com.dili.logger.mapper.BusinessLogRepository;
 import com.dili.logger.sdk.domain.input.BusinessLogQueryInput;
 import com.dili.logger.service.BusinessLogService;
+import com.dili.logger.service.remote.DataDictionaryRpcService;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.PageOutput;
 import com.dili.ss.sid.util.IdUtils;
@@ -43,6 +44,9 @@ public class BusinessLogServiceImpl implements BusinessLogService<BusinessLog> {
 
     @Autowired
     private ElasticsearchRestTemplate elasticsearchRestTemplate;
+
+    @Autowired
+    private DataDictionaryRpcService dataDictionaryRpcService;
 
 
     @Override
@@ -105,11 +109,13 @@ public class BusinessLogServiceImpl implements BusinessLogService<BusinessLog> {
 
     @Override
     public void save(BusinessLog log) {
-        if (Objects.isNull(log.getId())) {
-            log.setId(IdUtils.nextId());
-        }
+        //由日志系统生成统一的ID，忽略客户传入的ID
+        log.setId(IdUtils.nextId());
         if (Objects.isNull(log.getCreateTime())) {
             log.setCreateTime(LocalDateTime.now());
+        }
+        if (StrUtil.isBlank(log.getOperationTypeText())) {
+            log.setOperationTypeText(dataDictionaryRpcService.getOperationTypeText(log.getOperationType()));
         }
         businessLogRepository.save(log);
     }
@@ -118,11 +124,13 @@ public class BusinessLogServiceImpl implements BusinessLogService<BusinessLog> {
     public void batchSave(List<BusinessLog> logList) {
         if (CollectionUtil.isNotEmpty(logList)) {
             logList.forEach(l -> {
-                if (Objects.isNull(l.getId())) {
-                    l.setId(IdUtils.nextId());
-                }
+                //由日志系统生成统一的ID，忽略客户传入的ID
+                l.setId(IdUtils.nextId());
                 if (Objects.isNull(l.getCreateTime())) {
                     l.setCreateTime(LocalDateTime.now());
+                }
+                if (StrUtil.isBlank(l.getOperationTypeText())) {
+                    l.setOperationTypeText(dataDictionaryRpcService.getOperationTypeText(l.getOperationType()));
                 }
             });
             businessLogRepository.saveAll(logList);

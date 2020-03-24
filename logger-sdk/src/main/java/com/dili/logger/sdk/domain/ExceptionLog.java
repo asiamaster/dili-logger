@@ -18,6 +18,10 @@ public class ExceptionLog extends BaseLog {
      */
     private String exceptionType;
 
+    /**
+     * 冗余存储异常类型的显示值
+     */
+    private String exceptionTypeText;
 
     public String getExceptionType() {
         return exceptionType;
@@ -27,4 +31,11 @@ public class ExceptionLog extends BaseLog {
         this.exceptionType = exceptionType;
     }
 
+    public String getExceptionTypeText() {
+        return exceptionTypeText;
+    }
+
+    public void setExceptionTypeText(String exceptionTypeText) {
+        this.exceptionTypeText = exceptionTypeText;
+    }
 }

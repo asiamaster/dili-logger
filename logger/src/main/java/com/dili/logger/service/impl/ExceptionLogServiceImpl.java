@@ -7,6 +7,7 @@ import com.dili.logger.domain.ExceptionLog;
 import com.dili.logger.mapper.ExceptionLogRepository;
 import com.dili.logger.sdk.domain.input.ExceptionLogQueryInput;
 import com.dili.logger.service.ExceptionLogService;
+import com.dili.logger.service.remote.DataDictionaryRpcService;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.PageOutput;
 import com.dili.ss.sid.util.IdUtils;
@@ -44,6 +45,8 @@ public class ExceptionLogServiceImpl implements ExceptionLogService {
     @Autowired
     private ElasticsearchRestTemplate elasticsearchRestTemplate;
 
+    @Autowired
+    private DataDictionaryRpcService dataDictionaryRpcService;
 
     @Override
     public PageOutput<List<ExceptionLog>> searchPage(ExceptionLogQueryInput condition) {
@@ -105,11 +108,12 @@ public class ExceptionLogServiceImpl implements ExceptionLogService {
 
     @Override
     public void save(ExceptionLog log) {
-        if (Objects.isNull(log.getId())) {
-            log.setId(IdUtils.nextId());
-        }
+        log.setId(IdUtils.nextId());
         if (Objects.isNull(log.getCreateTime())) {
             log.setCreateTime(LocalDateTime.now());
+        }
+        if (StrUtil.isBlank(log.getExceptionTypeText())) {
+            log.setExceptionTypeText(dataDictionaryRpcService.getOperationTypeText(log.getExceptionType()));
         }
         exceptionLogRepository.save(log);
     }
@@ -118,11 +122,12 @@ public class ExceptionLogServiceImpl implements ExceptionLogService {
     public void batchSave(List<ExceptionLog> logList) {
         if (CollectionUtil.isNotEmpty(logList)) {
             logList.forEach(l -> {
-                if (Objects.isNull(l.getId())) {
-                    l.setId(IdUtils.nextId());
-                }
+                l.setId(IdUtils.nextId());
                 if (Objects.isNull(l.getCreateTime())) {
                     l.setCreateTime(LocalDateTime.now());
+                }
+                if (StrUtil.isBlank(l.getExceptionTypeText())) {
+                    l.setExceptionTypeText(dataDictionaryRpcService.getOperationTypeText(l.getExceptionType()));
                 }
             });
             exceptionLogRepository.saveAll(logList);

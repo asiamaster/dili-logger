@@ -25,6 +25,7 @@ public class BusinessLogBuilder implements LogBuilder {
     public BaseLog build(Method method, Object[] args) {
         BusinessLog businessLog = BeanConver.copyMap(LoggerContext.getAll(), BusinessLog.class);
         businessLog.setRemoteIp(RequestUtils.getIpAddress(LoggerContext.getRequest()));
+        businessLog.setServerIp(LoggerContext.getRequest().getLocalAddr());
         return businessLog;
     }
 

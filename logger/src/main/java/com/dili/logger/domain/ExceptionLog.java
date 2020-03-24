@@ -31,4 +31,10 @@ public class ExceptionLog extends BaseLog implements Serializable {
     @Field(type = FieldType.Keyword)
     private String exceptionType;
 
+    /**
+     * 冗余存储异常类型的显示值
+     */
+    @Field(type = FieldType.Text, index = false)
+    private String exceptionTypeText;
+
 }

@@ -75,6 +75,11 @@ public class BaseLog extends BaseDomain implements Serializable {
      */
     private String remoteIp;
 
+    /**
+     * 操作的服务端IP
+     */
+    private String serverIp;
+
     @Override
     public Long getId() {
         return id;
@@ -171,5 +176,13 @@ public class BaseLog extends BaseDomain implements Serializable {
 
     public void setRemoteIp(String remoteIp) {
         this.remoteIp = remoteIp;
+    }
+
+    public String getServerIp() {
+        return serverIp;
+    }
+
+    public void setServerIp(String serverIp) {
+        this.serverIp = serverIp;
     }
 }
