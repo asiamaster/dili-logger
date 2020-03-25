@@ -11,6 +11,7 @@ import com.dili.logger.service.remote.DataDictionaryRpcService;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.PageOutput;
 import com.dili.ss.sid.util.IdUtils;
+import com.dili.uap.sdk.domain.DataDictionaryValue;
 import com.google.common.collect.Lists;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -26,7 +27,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * <B>Description</B>
@@ -115,7 +118,7 @@ public class BusinessLogServiceImpl implements BusinessLogService<BusinessLog> {
             log.setCreateTime(LocalDateTime.now());
         }
         if (StrUtil.isBlank(log.getOperationTypeText())) {
-            log.setOperationTypeText(dataDictionaryRpcService.getOperationTypeText(log.getOperationType()));
+            log.setOperationTypeText(dataDictionaryRpcService.getByDdCodeAndCode("operation_type", log.getOperationType()).map(DataDictionaryValue::getName).orElse(""));
         }
         businessLogRepository.save(log);
     }
@@ -123,6 +126,7 @@ public class BusinessLogServiceImpl implements BusinessLogService<BusinessLog> {
     @Override
     public void batchSave(List<BusinessLog> logList) {
         if (CollectionUtil.isNotEmpty(logList)) {
+            Map<String, DataDictionaryValue> operationTypeMap = dataDictionaryRpcService.getOperationTypeMap();
             logList.forEach(l -> {
                 //由日志系统生成统一的ID，忽略客户传入的ID
                 l.setId(IdUtils.nextId());
@@ -130,7 +134,7 @@ public class BusinessLogServiceImpl implements BusinessLogService<BusinessLog> {
                     l.setCreateTime(LocalDateTime.now());
                 }
                 if (StrUtil.isBlank(l.getOperationTypeText())) {
-                    l.setOperationTypeText(dataDictionaryRpcService.getOperationTypeText(l.getOperationType()));
+                    l.setOperationTypeText(operationTypeMap.containsKey(l.getOperationType()) ? operationTypeMap.get(l.getOperationType()).getName() : "");
                 }
             });
             businessLogRepository.saveAll(logList);

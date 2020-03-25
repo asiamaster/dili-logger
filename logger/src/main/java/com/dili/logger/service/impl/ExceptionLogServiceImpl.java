@@ -11,6 +11,7 @@ import com.dili.logger.service.remote.DataDictionaryRpcService;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.PageOutput;
 import com.dili.ss.sid.util.IdUtils;
+import com.dili.uap.sdk.domain.DataDictionaryValue;
 import com.google.common.collect.Lists;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -113,7 +115,7 @@ public class ExceptionLogServiceImpl implements ExceptionLogService {
             log.setCreateTime(LocalDateTime.now());
         }
         if (StrUtil.isBlank(log.getExceptionTypeText())) {
-            log.setExceptionTypeText(dataDictionaryRpcService.getOperationTypeText(log.getExceptionType()));
+            log.setExceptionTypeText(dataDictionaryRpcService.getByDdCodeAndCode("exception_type", log.getExceptionType()).map(DataDictionaryValue::getName).orElse(""));
         }
         exceptionLogRepository.save(log);
     }
@@ -121,18 +123,18 @@ public class ExceptionLogServiceImpl implements ExceptionLogService {
     @Override
     public void batchSave(List<ExceptionLog> logList) {
         if (CollectionUtil.isNotEmpty(logList)) {
+            Map<String, DataDictionaryValue> exceptionTypeMap = dataDictionaryRpcService.getExceptionTypeMap();
             logList.forEach(l -> {
                 l.setId(IdUtils.nextId());
                 if (Objects.isNull(l.getCreateTime())) {
                     l.setCreateTime(LocalDateTime.now());
                 }
                 if (StrUtil.isBlank(l.getExceptionTypeText())) {
-                    l.setExceptionTypeText(dataDictionaryRpcService.getOperationTypeText(l.getExceptionType()));
+                    l.setExceptionTypeText(exceptionTypeMap.containsKey(l.getExceptionType()) ? exceptionTypeMap.get(l.getExceptionType()).getName() : "");
                 }
             });
             exceptionLogRepository.saveAll(logList);
         }
-
     }
 
     @Override

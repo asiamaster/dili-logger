@@ -11,6 +11,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * <B>Cross跨域请求拦截器</B>
@@ -49,36 +53,40 @@ public class DataDictionaryRpcService {
      * @param code   值编码
      * @return
      */
-    public DataDictionaryValue getByDdCodeAndCode(String ddCode, String code) {
+    public Optional<DataDictionaryValue> getByDdCodeAndCode(String ddCode, String code) {
         if (StrUtil.isNotBlank(ddCode) && StrUtil.isNotBlank(code)) {
             DataDictionaryValue dataDictionaryValue = DTOUtils.newInstance(DataDictionaryValue.class);
             dataDictionaryValue.setDdCode(ddCode);
             dataDictionaryValue.setCode(code);
             BaseOutput<List<DataDictionaryValue>> output = dataDictionaryRpc.listDataDictionaryValue(dataDictionaryValue);
             if (output.isSuccess() && CollectionUtil.isNotEmpty(output.getData())) {
-                return output.getData().get(0);
+                return Optional.ofNullable(output.getData().get(0));
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     /**
-     * 根据code获取业务日志操作类型对应的文本
-     * @param code 值code
+     * 获取操作类型并转换的map对象
      * @return
      */
-    public String getOperationTypeText(String code) {
-        DataDictionaryValue operationType = getByDdCodeAndCode("operation_type", code);
-        return null == operationType ? "" : operationType.getName();
+    public Map<String, DataDictionaryValue> getOperationTypeMap() {
+        List<DataDictionaryValue> operationTypeList = listDataDictionaryValueByDdCode("operation_type");
+        if (CollectionUtil.isNotEmpty(operationTypeList)) {
+            return operationTypeList.stream().collect(Collectors.toMap(DataDictionaryValue::getCode, Function.identity()));
+        }
+        return Collections.emptyMap();
     }
 
     /**
-     * 根据code获取业务日志操作类型对应的文本
-     * @param code 值code
+     * 获取异常类型并转换的map对象
      * @return
      */
-    public String getExceptionTypeText(String code) {
-        DataDictionaryValue exceptionType = getByDdCodeAndCode("exception_type", code);
-        return null == exceptionType ? "" : exceptionType.getName();
+    public Map<String, DataDictionaryValue> getExceptionTypeMap() {
+        List<DataDictionaryValue> operationTypeList = listDataDictionaryValueByDdCode("exception_type");
+        if (CollectionUtil.isNotEmpty(operationTypeList)) {
+            return operationTypeList.stream().collect(Collectors.toMap(DataDictionaryValue::getCode, Function.identity()));
+        }
+        return Collections.emptyMap();
     }
 }
