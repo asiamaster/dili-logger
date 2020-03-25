@@ -26,12 +26,6 @@ public @interface BusinessLogger {
     String operationType() default "";
 
     /**
-     * 操作类型文本
-     * @return
-     */
-    String operationTypeText() default "";
-
-    /**
      * 日志内容，支持beetl模板
      * @return
      */

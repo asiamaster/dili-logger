@@ -29,10 +29,6 @@ public interface LoggerConstant {
      */
     String LOG_OPERATION_TYPE_KEY = "operationType";
     /**
-     * 业务日志操作类型描述 key
-     */
-    String LOG_OPERATION_TYPE_TEXT_KEY = "operationTypeText";
-    /**
      * 异常类型 key
      */
     String LOG_EXCEPTION_TYPE_KEY = "exceptionType";
