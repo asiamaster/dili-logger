@@ -1,14 +1,8 @@
 <#bs4Body>
 
 <div class="container-fluid">
+    <#bs4nav>
     <form class="form" id="exceptionLogQueryForm">
-        <div class="row">
-            <nav class="col-12" aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item active" aria-current="page">异常日志</li>
-                </ol>
-            </nav>
-        </div>
         <div class="row  row-cols-6">
             <div class="form-group col-auto">
                 <label for="createTimeStart" class="justify-content-end">异常日期</label>
@@ -43,6 +37,7 @@
             <button type="button" class="btn btn-outline-primary" onclick="queryExceptionLogDataHandler()"><i class="fa fa-search"></i> 查询</button>
         </div>
     </form>
+    </#bs4nav>
     <hr>
     <div class="">
         <div class="row">
@@ -77,10 +72,10 @@
                         <th data-width-unit="%" data-width="8" data-field="exceptionTypeText" data-align="center">
                             异常类型
                         </th>
-                        <th data-width-unit="%" data-width="20" data-field="content" data-formatter="contentFormatTip" data-align="center">
+                        <th data-width-unit="%" data-width="20" data-field="content" data-formatter="dataFormatterTip" data-align="center">
                             异常信息
                         </th>
-                        <th data-width-unit="%" data-width="10" data-field="notes" data-align="center">
+                        <th data-width-unit="%" data-width="10" data-field="notes" data-formatter="dataFormatterTip" data-align="center">
                             备注
                         </th>
                         <th data-width-unit="%" data-width="10" data-field="createTime" data-align="center" data-provider="datetimeProvider">
@@ -126,11 +121,12 @@
      */
     function queryExceptionLogDataHandler() {
         $('#toolbar button').attr('disabled', false);
-        $('#exceptionLogGrid').bootstrapTable('refreshOptions', {url: '/exceptionLog/listPage.action'});
+        $('#exceptionLogGrid').bootstrapTable('refresh');
+
     }
 
     $(function () {
-        queryExceptionLogDataHandler();
+        $('#exceptionLogGrid').bootstrapTable('refreshOptions', {url: '/exceptionLog/listPage.action'});
     });
 
     /**
@@ -145,17 +141,18 @@
     });
 
     /**
-     * 状态显示栏格式化显示tip
+     * 日志内容、备注等显示栏格式化显示tip
      * @param value
      * @param row
      * @param index
      */
-    function contentFormatTip(value,row,index) {
+    function dataFormatterTip(value,row,index) {
         if (value) {
             return '<span title="' + value + '">' + value + '</span>';
         } else {
             return "";
         }
     }
+
 </script>
 

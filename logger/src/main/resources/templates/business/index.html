@@ -1,14 +1,8 @@
 <#bs4Body>
 
 <div class="container-fluid">
+    <#bs4nav>
     <form class="form" id="businessLogQueryForm">
-        <div class="row">
-            <nav class="col-12" aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item active" aria-current="page">操作日志</li>
-                </ol>
-            </nav>
-        </div>
         <div class="row  row-cols-6">
             <div class="form-group col-auto">
                 <label for="createTimeStart" class="justify-content-end">操作日期</label>
@@ -52,6 +46,7 @@
             <button type="button" class="btn btn-outline-primary" onclick="queryBusinessLogDataHandler()"><i class="fa fa-search"></i> 查询</button>
         </div>
     </form>
+    </#bs4nav>
     <hr>
     <div class="">
         <div class="row">
@@ -86,10 +81,10 @@
                         <th data-width-unit="%" data-width="8" data-field="operationTypeText" data-align="center">
                             操作类型
                         </th>
-                        <th data-width-unit="%" data-width="20" data-field="content" data-formatter="contentFormatTip" data-align="center">
+                        <th data-width-unit="%" data-width="20" data-field="content" data-formatter="dataFormatterTip" data-align="center">
                             日志内容
                         </th>
-                        <th data-width-unit="%" data-width="10" data-field="notes" data-align="center">
+                        <th data-width-unit="%" data-width="10" data-field="notes" data-formatter="dataFormatterTip" data-align="center">
                             备注
                         </th>
                         <th data-width-unit="%" data-width="10" data-field="createTime" data-align="center" data-provider="datetimeProvider">
@@ -135,11 +130,11 @@
      */
     function queryBusinessLogDataHandler() {
         $('#toolbar button').attr('disabled', false);
-        $('#businessLogGrid').bootstrapTable('refreshOptions', {url: '/businessLog/listPage.action'});
+        $('#businessLogGrid').bootstrapTable('refresh');
     }
 
     $(function () {
-        queryBusinessLogDataHandler();
+        $('#businessLogGrid').bootstrapTable('refreshOptions', {url: '/businessLog/listPage.action'});
     });
 
     /**
@@ -154,17 +149,18 @@
     });
 
     /**
-     * 状态显示栏格式化显示tip
+     * 日志内容、备注等显示栏格式化显示tip
      * @param value
      * @param row
      * @param index
      */
-    function contentFormatTip(value,row,index) {
+    function dataFormatterTip(value,row,index) {
         if (value) {
             return '<span title="' + value + '">' + value + '</span>';
         } else {
             return "";
         }
     }
+
 </script>
 

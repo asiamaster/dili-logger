@@ -71,11 +71,11 @@ public class ExceptionLogController {
             }
         }
         PageOutput<List<ExceptionLog>> pageOutput = exceptionLogService.searchPage(condition);
-        List<ExceptionLog> operationLogList = pageOutput.getData();
-        if (null == operationLogList) {
-            operationLogList = Lists.newArrayList();
+        List<ExceptionLog> exceptionLogList = pageOutput.getData();
+        if (null == exceptionLogList) {
+            exceptionLogList = Lists.newArrayList();
         }
-        List results = true ? ValueProviderUtils.buildDataByProvider(condition, operationLogList) : operationLogList;
+        List results = true ? ValueProviderUtils.buildDataByProvider(condition, exceptionLogList) : exceptionLogList;
         return new EasyuiPageOutput(pageOutput.getTotal(), results).toString();
     }
 }

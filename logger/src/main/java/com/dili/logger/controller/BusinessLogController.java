@@ -72,11 +72,11 @@ public class BusinessLogController {
             }
         }
         PageOutput<List<BusinessLog>> pageOutput = businessLogService.searchPage(condition);
-        List<BusinessLog> operationLogList = pageOutput.getData();
-        if (null == operationLogList) {
-            operationLogList = Lists.newArrayList();
+        List<BusinessLog> businessLogList = pageOutput.getData();
+        if (null == businessLogList) {
+            businessLogList = Lists.newArrayList();
         }
-        List results = true ? ValueProviderUtils.buildDataByProvider(condition, operationLogList) : operationLogList;
+        List results = true ? ValueProviderUtils.buildDataByProvider(condition, businessLogList) : businessLogList;
         return new EasyuiPageOutput(pageOutput.getTotal(), results).toString();
     }
 }
