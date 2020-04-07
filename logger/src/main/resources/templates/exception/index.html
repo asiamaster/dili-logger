@@ -24,16 +24,16 @@
             <div class="form-group col">
                 <label for="">异常类型</label>
                 <select class="form-control" id="exceptionType" name="exceptionType"></select>
-                <#bcomboProvider _id="exceptionType" _provider="dataDictionaryValueProvider"  _queryParams='{dd_code:"exception_type"}' _valueField="value" _textField="text" _value=""/>
+                <#bcomboProvider _id="exceptionType" _provider="dataDictionaryValueProvider"  _queryParams='{dd_code:"exception_type",emptyText:"-- 全部 --"}' _valueField="value" _textField="text" _value=""/>
             </div>
             <div class="form-group col">
                 <label for="">所属市场</label>
                 <select class="form-control" id="marketId" name="marketId"></select>
-                <#bcomboProvider _id="marketId" _provider="marketProvider"  _valueField="value" _textField="text" _value=""/>
+                <#bcomboProvider _id="marketId" _provider="marketProvider" _queryParams='{emptyText:"-- 全部 --"}' _valueField="value" _textField="text" _value=""/>
             </div>
         </div>
         <div class="">
-            <button type="button" class="btn btn-outline-primary mr-2"onclick="javascript:$('#exceptionLogQueryForm')[0].reset();"><i class="fa fa-refresh"></i> 清空</button>
+            <button type="button" class="btn btn-outline-primary mr-2"onclick="javascript:$('#exceptionLogQueryForm .form-control').val('');"><i class="fa fa-refresh"></i> 清空</button>
             <button type="button" class="btn btn-outline-primary" onclick="queryExceptionLogDataHandler()"><i class="fa fa-search"></i> 查询</button>
         </div>
     </form>
