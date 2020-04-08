@@ -83,6 +83,10 @@ public class BusinessLogServiceImpl implements BusinessLogService<BusinessLog> {
                 pageNum = condition.getPage();
             }
             searchQuery.withPageable(PageRequest.of(pageNum - 1, condition.getRows()));
+        } else {
+            //如果未传入rows，因为es默认查询10条，所有，则认为查询所有(es允许的单页最大值)
+            isGetAll = true;
+            searchQuery.withPageable(PageRequest.of(pageNum - 1, ESConfig.getMaxSize()));
         }
         ScrolledPage<BusinessLog> pageInfo = elasticsearchRestTemplate.startScroll(5000, searchQuery.build(), BusinessLog.class);
         if (0 == pageInfo.getTotalElements()) {

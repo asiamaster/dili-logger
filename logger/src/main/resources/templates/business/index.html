@@ -22,6 +22,11 @@
                 </div>
             </div>
             <div class="form-group col">
+                <label for="">所属市场</label>
+                <select class="form-control" id="marketId" name="marketId"></select>
+                <#bcomboProvider _id="marketId" _provider="marketProvider" _queryParams='{emptyText:"-- 全部 --"}' _valueField="value" _textField="text" _value=""/>
+            </div>
+            <div class="form-group col">
                 <label for="">操作类型</label>
                 <select class="form-control" id="operationType" name="operationType"></select>
                 <#bcomboProvider _id="operationType" _provider="dataDictionaryValueProvider"  _queryParams='{dd_code:"operation_type",emptyText:"-- 全部 --"}' _valueField="value" _textField="text" _value=""/>
@@ -32,18 +37,17 @@
                 <#bcomboProvider _id="businessType" _provider="dataDictionaryValueProvider"  _queryParams='{dd_code:"log_business_type",emptyText:"-- 全部 --"}' _valueField="value" _textField="text" _value=""/>
             </div>
             <div class="form-group col">
-                <label for="">所属市场</label>
-                <select class="form-control" id="marketId" name="marketId"></select>
-                <#bcomboProvider _id="marketId" _provider="marketProvider" _queryParams='{emptyText:"-- 全部 --"}' _valueField="value" _textField="text" _value=""/>
+                <label for="">业务编号</label>
+                <input type="text" class="form-control" id="businessCode" name="businessCode">
             </div>
             <div class="form-group col">
                 <label for="_operatorId" class="">操作人</label>
                 <#bautoCompleteProvider _hiddenDomainClass="form-control" _hiddenDomainId="operatorId" _hiddenDomainName="operatorId" _displayDomainId="_operatorId" _displayDomainName="_operatorId" _placeholder="" _provider="userProvider" _validatorMethod="isSelected" _value="" _text="" />
             </div>
-        </div>
-        <div class="">
-            <button type="button" class="btn btn-outline-primary mr-2"onclick="javascript:$('#businessLogQueryForm .form-control').val('');"><i class="fa fa-refresh"></i> 清空</button>
-            <button type="button" class="btn btn-outline-primary" onclick="queryBusinessLogDataHandler()"><i class="fa fa-search"></i> 查询</button>
+            <div class="col align-self-center mt-3">
+                <button type="button" class="btn btn-outline-primary mr-2"onclick="javascript:$('#businessLogQueryForm .form-control').val('');"><i class="fa fa-refresh"></i> 清空</button>
+                <button type="button" class="btn btn-outline-primary" onclick="queryBusinessLogDataHandler()"><i class="fa fa-search"></i> 查询</button>
+            </div>
         </div>
     </form>
     </#bs4nav>
