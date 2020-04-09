@@ -1,55 +1,54 @@
 <#bs4Body>
-
 <div class="container-fluid">
     <#bs4nav>
-    <form class="form" id="businessLogQueryForm">
-        <div class="row  row-cols-6">
-            <div class="form-group col-auto">
-                <label for="createTimeStart" class="justify-content-end">操作日期</label>
-                <div class="form-inline">
-                    <div class="input-group">
-                        <input type="text" name="createTimeStart" id="createTimeStart" class="form-control laydatetime"/>
-                        <div class="input-group-append">
-                            <label for="createTimeStart" class="input-group-text fa fa-calendar"></label>
-                        </div>
-                    </div>&nbsp;&nbsp;至&nbsp;&nbsp;
-                    <div class="input-group" id="datetimepicker3">
-                        <input type="text" name="createTimeEnd" id="createTimeEnd" class="form-control laydatetime" value=""/>
-                        <div class="input-group-append">
-                            <label for="createTimeEnd" class="input-group-text fa fa-calendar"></label>
+        <form class="form" id="businessLogQueryForm">
+            <div class="row  row-cols-6">
+                <div class="form-group col-auto">
+                    <label for="createTimeStart" class="justify-content-end">操作日期</label>
+                    <div class="form-inline">
+                        <div class="input-group">
+                            <input type="text" name="createTimeStart" id="createTimeStart" class="form-control laydatetime"/>
+                            <div class="input-group-append">
+                                <label for="createTimeStart" class="input-group-text fa fa-calendar"></label>
+                            </div>
+                        </div>&nbsp;&nbsp;至&nbsp;&nbsp;
+                        <div class="input-group" id="datetimepicker3">
+                            <input type="text" name="createTimeEnd" id="createTimeEnd" class="form-control laydatetime" value=""/>
+                            <div class="input-group-append">
+                                <label for="createTimeEnd" class="input-group-text fa fa-calendar"></label>
+                            </div>
                         </div>
                     </div>
                 </div>
+                <div class="form-group col">
+                    <label for="">所属市场</label>
+                    <select class="form-control" id="marketId" name="marketId"></select>
+                    <#bcomboProvider _id="marketId" _provider="marketProvider" _queryParams='{emptyText:"-- 全部 --"}' _valueField="value" _textField="text" _value=""/>
+                </div>
+                <div class="form-group col">
+                    <label for="">操作类型</label>
+                    <select class="form-control" id="operationType" name="operationType"></select>
+                    <#bcomboProvider _id="operationType" _provider="dataDictionaryValueProvider"  _queryParams='{dd_code:"operation_type",emptyText:"-- 全部 --"}' _valueField="value" _textField="text" _value=""/>
+                </div>
+                <div class="form-group col">
+                    <label for="">业务类型</label>
+                    <select class="form-control" id="businessType" name="businessType"></select>
+                    <#bcomboProvider _id="businessType" _provider="dataDictionaryValueProvider"  _queryParams='{dd_code:"log_business_type",emptyText:"-- 全部 --"}' _valueField="value" _textField="text" _value=""/>
+                </div>
+                <div class="form-group col">
+                    <label for="">业务编号</label>
+                    <input type="text" class="form-control" id="businessCode" name="businessCode">
+                </div>
+                <div class="form-group col">
+                    <label for="_operatorId" class="">操作人</label>
+                    <#bautoCompleteProvider _hiddenDomainClass="form-control" _hiddenDomainId="operatorId" _hiddenDomainName="operatorId" _displayDomainId="_operatorId" _displayDomainName="_operatorId" _placeholder="" _provider="userProvider" _validatorMethod="isSelected" _value="" _text="" />
+                </div>
+                <div class="col align-self-center mt-3">
+                    <button type="button" class="btn btn-outline-primary mr-2"onclick="javascript:$('#businessLogQueryForm .form-control').val('');"><i class="fa fa-refresh"></i> 清空</button>
+                    <button type="button" class="btn btn-outline-primary" onclick="queryBusinessLogDataHandler()"><i class="fa fa-search"></i> 查询</button>
+                </div>
             </div>
-            <div class="form-group col">
-                <label for="">所属市场</label>
-                <select class="form-control" id="marketId" name="marketId"></select>
-                <#bcomboProvider _id="marketId" _provider="marketProvider" _queryParams='{emptyText:"-- 全部 --"}' _valueField="value" _textField="text" _value=""/>
-            </div>
-            <div class="form-group col">
-                <label for="">操作类型</label>
-                <select class="form-control" id="operationType" name="operationType"></select>
-                <#bcomboProvider _id="operationType" _provider="dataDictionaryValueProvider"  _queryParams='{dd_code:"operation_type",emptyText:"-- 全部 --"}' _valueField="value" _textField="text" _value=""/>
-            </div>
-            <div class="form-group col">
-                <label for="">业务类型</label>
-                <select class="form-control" id="businessType" name="businessType"></select>
-                <#bcomboProvider _id="businessType" _provider="dataDictionaryValueProvider"  _queryParams='{dd_code:"log_business_type",emptyText:"-- 全部 --"}' _valueField="value" _textField="text" _value=""/>
-            </div>
-            <div class="form-group col">
-                <label for="">业务编号</label>
-                <input type="text" class="form-control" id="businessCode" name="businessCode">
-            </div>
-            <div class="form-group col">
-                <label for="_operatorId" class="">操作人</label>
-                <#bautoCompleteProvider _hiddenDomainClass="form-control" _hiddenDomainId="operatorId" _hiddenDomainName="operatorId" _displayDomainId="_operatorId" _displayDomainName="_operatorId" _placeholder="" _provider="userProvider" _validatorMethod="isSelected" _value="" _text="" />
-            </div>
-            <div class="col align-self-center mt-3">
-                <button type="button" class="btn btn-outline-primary mr-2"onclick="javascript:$('#businessLogQueryForm .form-control').val('');"><i class="fa fa-refresh"></i> 清空</button>
-                <button type="button" class="btn btn-outline-primary" onclick="queryBusinessLogDataHandler()"><i class="fa fa-search"></i> 查询</button>
-            </div>
-        </div>
-    </form>
+        </form>
     </#bs4nav>
     <hr>
     <div class="">
@@ -110,7 +109,6 @@
         </div>
     </div>
 </div>
-
 </#bs4Body>
 
 <script>
