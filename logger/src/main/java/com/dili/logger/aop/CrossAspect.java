@@ -46,18 +46,22 @@ public class CrossAspect {
         String referer = request.getHeader("Referer");
         String requestOrigin = request.getHeader("Origin");
         Boolean allowed = false;
+        if (StrUtil.isBlank(referer) && StrUtil.isBlank(requestOrigin)) {
+            log.error("已拦截源地址[{}]的调用日志请求,获取到的请求源为空", referer);
+            return BaseOutput.failure("未获取到请求源");
+        }
         if (StrUtil.isBlank(requestOrigin)) {
-            log.warn("已拦截源地址[{}]的调用日志请求,获取到的请求域[Origin]为空", referer);
-            return BaseOutput.failure("未获取到请求域");
+            requestOrigin = referer;
+        } else {
+            referer = requestOrigin;
         }
         int end = requestOrigin.indexOf(".com");
         if (end < 0) {
-            log.warn("已拦截源地址[{}]的调用日志请求", referer);
+            log.warn("已拦截源地址[{}]的调用日志请求,请求域不被支持", referer);
             return BaseOutput.failure("请求域不被支持");
         }
         requestOrigin = requestOrigin.substring(0, end + 4);
         AntPathMatcher pathMatcher = new AntPathMatcher();
-
         for (String allowedOrigin : allowedOrigins) {
             //推荐方式:正则  注意(CrossOrigin(origins = {"*.abc.com"}) ) 主域会匹配主域+子域   origins = {"*.pay.abc.com"} 子域名只会匹配子域
             if (pathMatcher.isPattern(allowedOrigin) && pathMatcher.match(allowedOrigin, requestOrigin)) {

@@ -5,6 +5,7 @@ import com.dili.logger.sdk.domain.input.BusinessLogQueryInput;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.PageOutput;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -27,7 +28,7 @@ public interface BusinessLogRpc {
      * @return
      */
     @RequestMapping(value = "/api/businessLog/save", method = {RequestMethod.POST})
-    BaseOutput save(BusinessLog condition);
+    BaseOutput save(BusinessLog condition, @RequestHeader("Referer") String referer);
 
     /**
      * 批量保存业务日志数据
@@ -35,7 +36,7 @@ public interface BusinessLogRpc {
      * @return
      */
     @RequestMapping(value = "/api/businessLog/batchSave", method = {RequestMethod.POST})
-    BaseOutput batchSave(List<BusinessLog> businessLogList);
+    BaseOutput batchSave(List<BusinessLog> businessLogList, @RequestHeader("Referer") String referer);
 
     /**
      * 获取客户列表信息

@@ -5,6 +5,7 @@ import com.dili.logger.sdk.domain.input.ExceptionLogQueryInput;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.PageOutput;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -27,7 +28,7 @@ public interface ExceptionLogRpc {
      * @return
      */
     @RequestMapping(value = "/api/exceptionLog/save", method = {RequestMethod.POST})
-    BaseOutput save(ExceptionLog condition);
+    BaseOutput save(ExceptionLog condition, @RequestHeader("Referer") String referer);
 
     /**
      * 批量保存异常日志数据
@@ -35,7 +36,7 @@ public interface ExceptionLogRpc {
      * @return
      */
     @RequestMapping(value = "/api/exceptionLog/batchSave", method = {RequestMethod.POST})
-    BaseOutput batchSave(List<ExceptionLog> exceptionLogList);
+    BaseOutput batchSave(List<ExceptionLog> exceptionLogList, @RequestHeader("Referer") String referer);
 
     /**
      * 获取客户列表信息
