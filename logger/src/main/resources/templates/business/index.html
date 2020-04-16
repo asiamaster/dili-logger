@@ -56,7 +56,7 @@
             <div class="col-12">
                 <div id="toolbar" class="btn-group" role="group" aria-label="Toolbar with button groups">
                     <button id="btn_export" type="button" class="btn btn-primary" onclick="bui.util.doExport('businessLogGrid','businessLogQueryForm')"><i
-                            class="fa fa-file-excel-o"></i>导出
+                            class="fa fa-download"></i> 导出
                     </button>
                 </div>
                 <table id="businessLogGrid" data-toggle="table" data-title="业务日志列表" class="table" data-toolbar="#toolbar"
@@ -131,6 +131,18 @@
      * 查询处理
      */
     function queryBusinessLogDataHandler() {
+        let start = $('#createTimeStart').val();
+        let end = $('#createTimeEnd').val();
+        let startMoment, endMoment;
+        if (!start || !end) {
+            return false;
+        }
+        startMoment = new moment(start, "YYYY-MM-DD HH:mm:ss");
+        endMoment = new moment(end, "YYYY-MM-DD HH:mm:ss");
+        if ( endMoment.diff(startMoment, 'months', true) > 1 ) {
+            bs4pop.notice('最长查询范围为 1 个月！', {position: 'topleft', type: 'danger'});
+            return false;
+        }
         $('#toolbar button').attr('disabled', false);
         $('#businessLogGrid').bootstrapTable('refresh');
     }
