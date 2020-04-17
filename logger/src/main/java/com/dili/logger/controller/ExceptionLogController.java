@@ -51,6 +51,7 @@ public class ExceptionLogController {
         Calendar end = CalendarUtil.endOfDay(Calendar.getInstance());
         modelMap.put("createTimeEnd", DateUtil.format(end.getTime(), "yyyy-MM-dd HH:mm:ss"));
         end.add(Calendar.MONTH, -1);
+        end.add(Calendar.DATE, 1);
         Calendar begin = CalendarUtil.beginOfDay(end);
         modelMap.put("createTimeStart", DateUtil.format(begin.getTime(), "yyyy-MM-dd HH:mm:ss"));
         return "exception/index";
