@@ -1,8 +1,9 @@
 package com.dili.logger.controller;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.date.CalendarUtil;
+import cn.hutool.core.date.DateUtil;
 import com.dili.logger.domain.BusinessLog;
-import com.dili.logger.provider.MarketProvider;
 import com.dili.logger.sdk.domain.input.BusinessLogQueryInput;
 import com.dili.logger.service.BusinessLogService;
 import com.dili.logger.service.remote.FirmRpcService;
@@ -18,10 +19,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -50,6 +49,11 @@ public class BusinessLogController {
      */
     @RequestMapping(value = "/index.html", method = RequestMethod.GET)
     public String index(ModelMap modelMap) {
+        Calendar end = CalendarUtil.endOfDay(Calendar.getInstance());
+        modelMap.put("createTimeEnd", DateUtil.format(end.getTime(), "yyyy-MM-dd HH:mm:ss"));
+        end.add(Calendar.MONTH, -1);
+        Calendar begin = CalendarUtil.beginOfDay(end);
+        modelMap.put("createTimeStart", DateUtil.format(begin.getTime(), "yyyy-MM-dd HH:mm:ss"));
         return "business/index";
     }
 

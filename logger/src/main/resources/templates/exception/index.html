@@ -8,13 +8,13 @@
                     <label for="createTimeStart" class="justify-content-end">异常日期</label>
                     <div class="form-inline">
                         <div class="input-group">
-                            <input type="text" name="createTimeStart" id="createTimeStart" class="form-control laydatetime"/>
+                            <input type="text" name="createTimeStart" id="createTimeStart" class="form-control laydatetime" value="${createTimeStart!}"/>
                             <div class="input-group-append">
                                 <label for="createTimeStart" class="input-group-text fa fa-calendar"></label>
                             </div>
                         </div>&nbsp;&nbsp;至&nbsp;&nbsp;
                         <div class="input-group" id="datetimepicker3">
-                            <input type="text" name="createTimeEnd" id="createTimeEnd" class="form-control laydatetime" value=""/>
+                            <input type="text" name="createTimeEnd" id="createTimeEnd" class="form-control laydatetime" value="${createTimeEnd!}"/>
                             <div class="input-group-append">
                                 <label for="createTimeEnd" class="input-group-text fa fa-calendar"></label>
                             </div>
@@ -44,7 +44,7 @@
         <div class="row">
             <div class="col-12">
                 <div id="toolbar" class="btn-group" role="group" aria-label="Toolbar with button groups">
-                    <button id="btn_export" type="button" class="btn btn-primary" onclick="bui.util.doExport('exceptionLogGrid','exceptionLogQueryForm')"><i
+                    <button id="btn_export" type="button" class="btn btn-primary" onclick="exceptionLogExport();"><i
                             class="fa fa-download"></i> 导出
                     </button>
                 </div>
@@ -129,8 +129,7 @@
         }
         startMoment = new moment(start, "YYYY-MM-DD HH:mm:ss");
         endMoment = new moment(end, "YYYY-MM-DD HH:mm:ss");
-
-        if ( endMoment.diff(startMoment, 'months', true) > 1 ) {
+        if (endMoment.diff(startMoment, 'months', true) > 1) {
             bs4pop.notice('最长查询范围为 1 个月！', {position: 'topleft', type: 'danger'});
             return false;
         }
@@ -142,6 +141,27 @@
     $(function () {
         $('#exceptionLogGrid').bootstrapTable('refreshOptions', {url: '/exceptionLog/listPage.action'});
     });
+
+    /**
+     * 异常日志导出
+     */
+    function exceptionLogExport(){
+        let start = $('#createTimeStart').val();
+        let end = $('#createTimeEnd').val();
+        let startMoment, endMoment;
+        if (!start || !end) {
+            bs4pop.notice('请选择时间范围！', {position: 'topleft', type: 'danger'});
+            return false;
+        }
+        startMoment = new moment(start, "YYYY-MM-DD HH:mm:ss");
+        endMoment = new moment(end, "YYYY-MM-DD HH:mm:ss");
+        if (endMoment.diff(startMoment, 'months', true) > 1) {
+            bs4pop.notice('数据导出最长时间范围为 1 个月！', {position: 'topleft', type: 'danger'});
+            return false;
+        }
+        bui.util.doExport('exceptionLogGrid','exceptionLogQueryForm');
+    }
+
 
     /**
      时间范围
