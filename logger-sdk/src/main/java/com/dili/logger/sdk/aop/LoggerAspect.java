@@ -5,9 +5,8 @@ import com.dili.logger.sdk.annotation.BusinessLogger;
 import com.dili.logger.sdk.base.LogBuilder;
 import com.dili.logger.sdk.base.LoggerContext;
 import com.dili.logger.sdk.boot.LoggerRabbitConfiguration;
-import com.dili.logger.sdk.boot.LoggerRabbitProducerConfiguration;
+import com.dili.logger.sdk.component.MsgService;
 import com.dili.logger.sdk.domain.BusinessLog;
-import com.dili.logger.sdk.dto.CorrelationDataExt;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.dto.IDTO;
 import com.dili.ss.exception.ParamErrorException;
@@ -23,9 +22,6 @@ import org.beetl.core.Template;
 import org.beetl.core.exception.BeetlException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.amqp.core.Message;
-import org.springframework.amqp.core.MessageBuilder;
-import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +38,10 @@ import javax.servlet.http.HttpServletRequest;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 日志切面
@@ -57,10 +56,7 @@ public class LoggerAspect {
     GroupTemplate groupTemplate;
 
     @Autowired
-    private RabbitTemplate rabbitTemplate;
-
-    @Autowired
-    private LoggerRabbitProducerConfiguration loggerRabbitProducerConfiguration;
+    private MsgService msgService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LoggerAspect.class);
 
@@ -84,7 +80,7 @@ public class LoggerAspect {
             if(retValue instanceof BaseOutput && !((BaseOutput)retValue).isSuccess()){
                 return retValue;
             }
-            sendMsg(LoggerRabbitConfiguration.LOGGER_TOPIC_EXCHANGE, LoggerRabbitConfiguration.LOGGER_ADD_BUSINESS_KEY, JSON.toJSONString(getBusinessLog(point)));
+            msgService.sendMsg(LoggerRabbitConfiguration.LOGGER_TOPIC_EXCHANGE, LoggerRabbitConfiguration.LOGGER_ADD_BUSINESS_KEY, JSON.toJSONString(getBusinessLog(point)));
             return retValue;
         }catch (Exception e){
             LOGGER.error(e.getMessage());
@@ -290,31 +286,6 @@ public class LoggerAspect {
             }
             throw new ParamErrorException(objName + "不是" + clazz.getName() +"的实例");
         }
-    }
-
-    /**
-     * 发送消息
-     * @param exchange
-     * @param routingKey
-     * @param json
-     */
-    private void sendMsg(String exchange, String routingKey, String json){
-        String uuid = UUID.randomUUID().toString();
-        Message message = MessageBuilder.withBody(json.getBytes())
-                .setContentType(MessageProperties.CONTENT_TYPE_JSON)
-                .setContentEncoding("utf-8")
-                .setMessageId(uuid)
-                .build();
-        this.rabbitTemplate.setReturnCallback(loggerRabbitProducerConfiguration);
-        this.rabbitTemplate.setConfirmCallback(loggerRabbitProducerConfiguration);
-
-        //使用继承扩展的CorrelationData 、id消息流水号
-        CorrelationDataExt correlationData =
-                new CorrelationDataExt(uuid);
-        correlationData.setMessage(message);
-        correlationData.setExchange(LoggerRabbitConfiguration.LOGGER_TOPIC_EXCHANGE);
-        correlationData.setRoutingKey(LoggerRabbitConfiguration.LOGGER_ADD_BUSINESS_KEY);
-        this.rabbitTemplate.convertAndSend(exchange, routingKey, message, correlationData);
     }
 
 }

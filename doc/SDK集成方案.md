@@ -1,14 +1,20 @@
 
-# 1. 引用依赖
+# 1 引用依赖
 ``` xml
 <dependency>
     <groupId>com.dili</groupId>
     <artifactId>logger-sdk</artifactId>
     <version>${logger.version}</version>
 </dependency>
+
+<!-- 发送MQ消息需要 -->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-amqp</artifactId>
+</dependency>
 ```
 
-# 2.引入权限spring bean
+# 2 引入权限spring bean
 Spring Boot项目在启动类Application.java中添加权限注解扫描路径
 ```
 @ComponentScan(basePackages={"com.dili.ss", "com.dili.logger.sdk"})
@@ -16,7 +22,7 @@ Spring Boot项目在启动类Application.java中添加权限注解扫描路径
 Spring 项目需要扫描`com.dili.logger.sdk`包
 
 
-# 3. application.properties
+# 3 application.properties
 ```
 logger.enable=true
 #MQ配置，不发消息可以不配置
@@ -31,7 +37,7 @@ spring.rabbitmq.publisher-confirm-type=correlated
 spring.rabbitmq.publisher-returns=true
 ```
 
-# 4. 注解使用
+# 4 注解使用
 ```
     /**
      * 获取模板绑定变量
@@ -73,3 +79,7 @@ if(userTicket != null) {
     LoggerContext.put(LoggerConstant.LOG_MARKET_ID_KEY, userTicket.getFirmId());
 }
 ```
+
+# 5 消息服务
+`com.dili.logger.sdk.component.MsgService`
+用于直接发送消息到MQ
