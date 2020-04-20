@@ -34,8 +34,6 @@ public class MsgService {
      * @param businessLog
      */
     public void sendBusinessLog(BusinessLog businessLog){
-        businessLog.setRemoteIp(RequestUtils.getIpAddress(LoggerContext.getRequest()));
-        businessLog.setServerIp(LoggerContext.getRequest().getLocalAddr());
         if(businessLog.getCreateTime() == null) {
             businessLog.setCreateTime(LocalDateTime.now());
         }
