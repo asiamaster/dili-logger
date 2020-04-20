@@ -37,4 +37,26 @@ public interface LoggerConstant {
      * 异常客户端ip key
      */
     String LOG_REMOTE_IP_KEY = "remoteIp";
+
+    //=================MQ 相关配置信息 ============//
+    /**
+     * MQ 交换机配置
+     */
+    String MQ_LOGGER_TOPIC_EXCHANGE = "dili.logger.topicExchange";
+    /**
+     * MQ 异常日志Queue
+     */
+    String MQ_LOGGER_ADD_EXCEPTION_QUEUE = "dili.logger.addExceptionQueue";
+    /**
+     * MQ 业务日志Key
+     */
+    String MQ_LOGGER_ADD_EXCEPTION_KEY = "dili.logger.addExceptionKey";
+    /**
+     * MQ 业务日志Queue
+     */
+    String MQ_LOGGER_ADD_BUSINESS_QUEUE = "dili.logger.addBusinessQueue";
+    /**
+     * MQ 业务日志Key
+     */
+    String MQ_LOGGER_ADD_BUSINESS_KEY = "dili.logger.addBusinessKey";
 }

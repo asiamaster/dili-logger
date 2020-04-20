@@ -1,26 +1,30 @@
 package com.dili.logger.sdk.component;
 
 import com.alibaba.fastjson.JSON;
-import com.dili.logger.sdk.base.LoggerContext;
-import com.dili.logger.sdk.boot.LoggerRabbitConfiguration;
 import com.dili.logger.sdk.boot.LoggerRabbitProducerConfiguration;
 import com.dili.logger.sdk.domain.BusinessLog;
+import com.dili.logger.sdk.domain.ExceptionLog;
 import com.dili.logger.sdk.dto.CorrelationDataExt;
-import com.dili.ss.mvc.util.RequestUtils;
+import com.dili.logger.sdk.glossary.LoggerConstant;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageBuilder;
 import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
  * MQ消息服务
  */
 @Component
+@ConditionalOnExpression("'${logger.enable}'=='true'")
+@ConditionalOnClass(RabbitTemplate.class)
 public class MsgService {
 
     @Autowired
@@ -33,20 +37,35 @@ public class MsgService {
      * 发送业务日志到MQ
      * @param businessLog
      */
-    public void sendBusinessLog(BusinessLog businessLog){
-        if(businessLog.getCreateTime() == null) {
-            businessLog.setCreateTime(LocalDateTime.now());
+    public void sendBusinessLog(BusinessLog businessLog) {
+        if (Objects.nonNull(businessLog)) {
+            if (businessLog.getCreateTime() == null) {
+                businessLog.setCreateTime(LocalDateTime.now());
+            }
+            sendMsg(LoggerConstant.MQ_LOGGER_ADD_BUSINESS_KEY, JSON.toJSONString(businessLog));
         }
-        sendMsg(LoggerRabbitConfiguration.LOGGER_TOPIC_EXCHANGE, LoggerRabbitConfiguration.LOGGER_ADD_BUSINESS_KEY, JSON.toJSONString(businessLog));
     }
+
+    /**
+     * 发送异常日志到MQ
+     * @param exceptionLog
+     */
+    public void sendExceptionLog(ExceptionLog exceptionLog) {
+        if (Objects.nonNull(exceptionLog)) {
+            if (exceptionLog.getCreateTime() == null) {
+                exceptionLog.setCreateTime(LocalDateTime.now());
+            }
+            sendMsg(LoggerConstant.MQ_LOGGER_ADD_EXCEPTION_KEY, JSON.toJSONString(exceptionLog));
+        }
+    }
+
     /**
      * 发送消息
      * 通用服务
-     * @param exchange
      * @param routingKey
      * @param json
      */
-    public void sendMsg(String exchange, String routingKey, String json){
+    public void sendMsg(String routingKey, String json) {
         String uuid = UUID.randomUUID().toString();
         Message message = MessageBuilder.withBody(json.getBytes())
                 .setContentType(MessageProperties.CONTENT_TYPE_JSON)
@@ -60,8 +79,8 @@ public class MsgService {
         CorrelationDataExt correlationData =
                 new CorrelationDataExt(uuid);
         correlationData.setMessage(message);
-        correlationData.setExchange(LoggerRabbitConfiguration.LOGGER_TOPIC_EXCHANGE);
-        correlationData.setRoutingKey(LoggerRabbitConfiguration.LOGGER_ADD_BUSINESS_KEY);
-        this.rabbitTemplate.convertAndSend(exchange, routingKey, message, correlationData);
+        correlationData.setExchange(LoggerConstant.MQ_LOGGER_TOPIC_EXCHANGE);
+        correlationData.setRoutingKey(routingKey);
+        this.rabbitTemplate.convertAndSend(LoggerConstant.MQ_LOGGER_TOPIC_EXCHANGE, routingKey, message, correlationData);
     }
 }

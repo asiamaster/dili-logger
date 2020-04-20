@@ -4,9 +4,9 @@ import com.alibaba.fastjson.JSON;
 import com.dili.logger.sdk.annotation.BusinessLogger;
 import com.dili.logger.sdk.base.LogBuilder;
 import com.dili.logger.sdk.base.LoggerContext;
-import com.dili.logger.sdk.boot.LoggerRabbitConfiguration;
 import com.dili.logger.sdk.component.MsgService;
 import com.dili.logger.sdk.domain.BusinessLog;
+import com.dili.logger.sdk.glossary.LoggerConstant;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.dto.IDTO;
 import com.dili.ss.exception.ParamErrorException;
@@ -80,7 +80,7 @@ public class LoggerAspect {
             if(retValue instanceof BaseOutput && !((BaseOutput)retValue).isSuccess()){
                 return retValue;
             }
-            msgService.sendMsg(LoggerRabbitConfiguration.LOGGER_TOPIC_EXCHANGE, LoggerRabbitConfiguration.LOGGER_ADD_BUSINESS_KEY, JSON.toJSONString(getBusinessLog(point)));
+            msgService.sendMsg(LoggerConstant.MQ_LOGGER_ADD_BUSINESS_KEY, JSON.toJSONString(getBusinessLog(point)));
             return retValue;
         }catch (Exception e){
             LOGGER.error(e.getMessage());

@@ -1,5 +1,6 @@
 package com.dili.logger.config;
 
+import com.dili.logger.sdk.glossary.LoggerConstant;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
@@ -20,28 +21,33 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMQConfig {
 
-    //消息交换机
-    public static final String LOGGER_TOPIC_EXCHANGE = "dili.logger.topicExchange";
-    public static final String LOGGER_ADD_BUSINESS_KEY = "dili.logger.addBusinessKey";
-    public static final String LOGGER_ADD_BUSINESS_QUEUE = "dili.logger.addBusinessQueue";
-
     @Bean
     public MessageConverter messageConverter() {
         return new Jackson2JsonMessageConverter();
     }
 
     @Bean
-    public TopicExchange topicExchange() {
-        return new TopicExchange(LOGGER_TOPIC_EXCHANGE, true, false);
+    public TopicExchange loggerTopicExchange() {
+        return new TopicExchange(LoggerConstant.MQ_LOGGER_TOPIC_EXCHANGE, true, false);
     }
 
     @Bean
-    public Queue addOperationQueue() {
-        return new Queue(LOGGER_ADD_BUSINESS_QUEUE, true, false, false);
+    public Queue addBusinessQueue() {
+        return new Queue(LoggerConstant.MQ_LOGGER_ADD_BUSINESS_QUEUE, true, false, false);
     }
 
     @Bean
-    public Binding addOperationBinding() {
-        return BindingBuilder.bind(addOperationQueue()).to(topicExchange()).with(LOGGER_ADD_BUSINESS_KEY);
+    public Binding addBusinessBinding() {
+        return BindingBuilder.bind(addBusinessQueue()).to(loggerTopicExchange()).with(LoggerConstant.MQ_LOGGER_ADD_BUSINESS_KEY);
+    }
+
+    @Bean
+    public Queue addExceptionQueue() {
+        return new Queue(LoggerConstant.MQ_LOGGER_ADD_EXCEPTION_QUEUE, true, false, false);
+    }
+
+    @Bean
+    public Binding addExceptionBinding() {
+        return BindingBuilder.bind(addExceptionQueue()).to(loggerTopicExchange()).with(LoggerConstant.MQ_LOGGER_ADD_EXCEPTION_KEY);
     }
 }
