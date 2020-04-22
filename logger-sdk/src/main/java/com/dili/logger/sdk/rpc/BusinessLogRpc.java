@@ -25,6 +25,7 @@ public interface BusinessLogRpc {
     /**
      * 保存单个业务日志信息
      * @param condition
+     * @param referer 请求header中的referer
      * @return
      */
     @RequestMapping(value = "/api/businessLog/save", method = {RequestMethod.POST})
@@ -33,6 +34,7 @@ public interface BusinessLogRpc {
     /**
      * 批量保存业务日志数据
      * @param businessLogList
+     * @param referer 请求header中的referer
      * @return
      */
     @RequestMapping(value = "/api/businessLog/batchSave", method = {RequestMethod.POST})

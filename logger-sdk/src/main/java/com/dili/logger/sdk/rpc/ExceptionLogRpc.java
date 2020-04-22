@@ -25,6 +25,7 @@ public interface ExceptionLogRpc {
     /**
      * 保存单个异常日志数据
      * @param condition
+     * @param referer 请求header中的referer
      * @return
      */
     @RequestMapping(value = "/api/exceptionLog/save", method = {RequestMethod.POST})
@@ -33,6 +34,7 @@ public interface ExceptionLogRpc {
     /**
      * 批量保存异常日志数据
      * @param exceptionLogList
+     * @@param referer 请求header中的referer
      * @return
      */
     @RequestMapping(value = "/api/exceptionLog/batchSave", method = {RequestMethod.POST})
