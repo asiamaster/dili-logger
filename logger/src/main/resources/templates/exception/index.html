@@ -182,13 +182,13 @@
      */
     function dataFormatterTip(value,row,index) {
         if (value) {
-            return '<span data-toggle="tooltip" data-placement="left" title="' + value + '">' + value + '</span>';
+            return "<span data-toggle='tooltip' data-placement='left' title='" + value + "'>" + value + "</span>";
         } else {
             return "";
         }
     }
     $(function() {
-        $('#businessLogGrid').on('load-success.bs.table', function () {
+        $('#exceptionLogGrid').on('load-success.bs.table', function () {
             $('[data-toggle="tooltip"]').tooltip()
         })
     })
