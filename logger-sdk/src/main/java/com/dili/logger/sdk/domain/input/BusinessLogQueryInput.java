@@ -43,6 +43,11 @@ public class BusinessLogQueryInput extends BusinessLog implements Serializable {
      */
     private Set<Long> marketIdSet;
 
+    /**
+     * 根据操作类型集，查询业务日志信息
+     */
+    private Set<String> operationTypeSet;
+
     public LocalDateTime getCreateTimeStart() {
         return createTimeStart;
     }
@@ -60,5 +65,11 @@ public class BusinessLogQueryInput extends BusinessLog implements Serializable {
     }
     public void setMarketIdSet(Set<Long> marketIdSet) {
         this.marketIdSet = marketIdSet;
+    }
+    public Set<String> getOperationTypeSet() {
+        return operationTypeSet;
+    }
+    public void setOperationTypeSet(Set<String> operationTypeSet) {
+        this.operationTypeSet = operationTypeSet;
     }
 }

@@ -41,6 +41,11 @@ public class ExceptionLogQueryInput extends ExceptionLog implements Serializable
      */
     private Set<Long> marketIdSet;
 
+    /**
+     * 根据异常类型集，查询业务日志信息
+     */
+    private Set<String> exceptionTypeSet;
+
     public LocalDateTime getCreateTimeStart() {
         return createTimeStart;
     }
@@ -58,5 +63,11 @@ public class ExceptionLogQueryInput extends ExceptionLog implements Serializable
     }
     public void setMarketIdSet(Set<Long> marketIdSet) {
         this.marketIdSet = marketIdSet;
+    }
+    public Set<String> getExceptionTypeSet() {
+        return exceptionTypeSet;
+    }
+    public void setExceptionTypeSet(Set<String> exceptionTypeSet) {
+        this.exceptionTypeSet = exceptionTypeSet;
     }
 }

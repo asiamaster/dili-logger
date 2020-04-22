@@ -187,6 +187,9 @@ public class BusinessLogServiceImpl implements BusinessLogService<BusinessLog> {
             if (CollectionUtil.isNotEmpty(condition.getMarketIdSet())) {
                 queryBuilder.filter(QueryBuilders.termsQuery("marketId", condition.getMarketIdSet()));
             }
+            if (CollectionUtil.isNotEmpty(condition.getOperationTypeSet())) {
+                queryBuilder.filter(QueryBuilders.termsQuery("operationType", condition.getOperationTypeSet()));
+            }
         }
         return queryBuilder;
     }
