@@ -40,11 +40,11 @@ public interface BusinessLogRpc {
 
     /**
      * 获取客户列表信息
-     * @param customer
+     * @param condition
      * @return
      */
     @RequestMapping(value = "/api/businessLog/listPage", method = RequestMethod.POST)
-    PageOutput<List<BusinessLog>> listPage(BusinessLogQueryInput customer);
+    PageOutput<List<BusinessLog>> listPage(BusinessLogQueryInput condition);
 
     /**
      * 查询日志数据

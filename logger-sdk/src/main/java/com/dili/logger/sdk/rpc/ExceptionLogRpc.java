@@ -40,11 +40,11 @@ public interface ExceptionLogRpc {
 
     /**
      * 获取客户列表信息
-     * @param customer
+     * @param condition
      * @return
      */
     @RequestMapping(value = "/api/exceptionLog/listPage", method = RequestMethod.POST)
-    PageOutput<List<ExceptionLog>> listPage(ExceptionLogQueryInput customer);
+    PageOutput<List<ExceptionLog>> listPage(ExceptionLogQueryInput condition);
 
     /**
      * 查询日志数据
