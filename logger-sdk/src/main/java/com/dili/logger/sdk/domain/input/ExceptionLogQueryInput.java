@@ -1,13 +1,11 @@
 package com.dili.logger.sdk.domain.input;
 
 import com.alibaba.fastjson.annotation.JSONField;
-import com.dili.logger.sdk.domain.BusinessLog;
 import com.dili.logger.sdk.domain.ExceptionLog;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Set;
 
 /**

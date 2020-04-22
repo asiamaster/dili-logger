@@ -7,7 +7,6 @@ import com.dili.ss.metadata.BatchProviderMeta;
 import com.dili.ss.metadata.FieldMeta;
 import com.dili.ss.metadata.ValuePair;
 import com.dili.ss.metadata.ValuePairImpl;
-import com.dili.ss.metadata.provider.BatchDisplayTextProviderAdaptor;
 import com.dili.ss.metadata.provider.BatchDisplayTextProviderSupport;
 import com.dili.uap.sdk.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -2,9 +2,7 @@ package com.dili.logger.service.remote;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.dili.ss.domain.BaseOutput;
-import com.dili.uap.sdk.domain.Firm;
 import com.dili.uap.sdk.domain.Systems;
-import com.dili.uap.sdk.domain.dto.FirmDto;
 import com.dili.uap.sdk.domain.dto.SystemDto;
 import com.dili.uap.sdk.rpc.SystemRpc;
 import org.springframework.beans.factory.annotation.Autowired;

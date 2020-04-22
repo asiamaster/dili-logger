@@ -1,19 +1,14 @@
 package com.dili.logger.provider;
 
-import com.dili.logger.service.remote.FirmRpcService;
 import com.dili.logger.service.remote.SystemRpcService;
-import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.dto.DTOUtils;
 import com.dili.ss.metadata.BatchProviderMeta;
 import com.dili.ss.metadata.FieldMeta;
 import com.dili.ss.metadata.ValuePair;
 import com.dili.ss.metadata.ValuePairImpl;
 import com.dili.ss.metadata.provider.BatchDisplayTextProviderSupport;
-import com.dili.uap.sdk.domain.Firm;
 import com.dili.uap.sdk.domain.Systems;
-import com.dili.uap.sdk.domain.dto.FirmDto;
 import com.dili.uap.sdk.domain.dto.SystemDto;
-import com.dili.uap.sdk.rpc.SystemRpc;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
