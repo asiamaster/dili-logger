@@ -164,7 +164,6 @@ public class BaseLog extends BaseDomain implements Serializable {
         this.operatorName = operatorName;
     }
 
-    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     public LocalDateTime getCreateTime() {
         return createTime;
     }
