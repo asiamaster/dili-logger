@@ -4,6 +4,17 @@ package com.dili.logger.sdk.glossary;
  * 日志常量
  */
 public interface LoggerConstant {
+
+    /**
+     * 日志备注信息
+     */
+    String LOG_NOTES_KEY = "notes";
+
+    /**
+     * 日志所属系统信息
+     */
+    String LOG_SYSTEM_CODE_KEY = "systemCode";
+
     /**
      * 日志操作人 key
      */
