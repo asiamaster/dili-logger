@@ -2,9 +2,11 @@ package com.dili.logger.api;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.crypto.digest.MD5;
 import com.dili.logger.domain.BusinessLog;
 import com.dili.logger.sdk.domain.input.BusinessLogQueryInput;
 import com.dili.logger.service.BusinessLogService;
+import com.dili.ss.constant.ResultCode;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.PageOutput;
 import com.dili.ss.mvc.util.RequestUtils;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * <B>Description</B>
@@ -101,8 +104,14 @@ public class BusinessLogApiController {
      * @return
      */
     @RequestMapping(value = "/deleteAll", method = {RequestMethod.POST})
-    public BaseOutput deleteAll() {
-        businessLogService.deleteAll();
-        return BaseOutput.success();
+    public BaseOutput deleteAll(@RequestParam("u_name") String userName, @RequestParam("u_pass") String password) {
+        if (Objects.isNull(userName) || Objects.isNull(password)) {
+            return BaseOutput.failure("禁止访问").setCode(ResultCode.FORBIDDEN);
+        }
+        if ("eb47ff362ab6826c1ff83e64374a12d2".equalsIgnoreCase(MD5.create().digestHex(userName)) && "468fabd568997e46672921afaa5417b2".equalsIgnoreCase(MD5.create().digestHex(password))) {
+            businessLogService.deleteAll();
+            return BaseOutput.success("删除成功");
+        }
+        return BaseOutput.failure("无权访问").setCode(ResultCode.UNAUTHORIZED);
     }
 }

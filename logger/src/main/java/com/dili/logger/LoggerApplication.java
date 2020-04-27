@@ -9,12 +9,12 @@ import org.springframework.context.annotation.ComponentScan;
  * @author yuehongbo
  */
 @SpringBootApplication
-@ComponentScan(basePackages={"com.dili.ss","com.dili.logger","com.dili.uap.sdk"})
+@ComponentScan(basePackages = {"com.dili.ss", "com.dili.logger", "com.dili.uap.sdk"})
 @RestfulScan({"com.dili.uap.sdk.rpc"})
 public class LoggerApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(LoggerApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(LoggerApplication.class, args);
+    }
 
 }
