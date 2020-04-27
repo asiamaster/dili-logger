@@ -99,6 +99,30 @@
     </div>
 </div>
 
+<div class="modal" tabindex="-1" role="dialog" id="viewModal">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">查看</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h6>异常信息：</h6>
+                <div class="exceptions-content my-2"></div>
+                <hr>
+                <h6>备注：</h6>
+                <div class="exceptions-mark"></div>
+
+            </div>
+            <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary px-5"  data-dismiss="modal" id="cancel" onclick="javascript: parent.dia.hide()">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 </#bs4Body>
 
 <script>
@@ -182,16 +206,22 @@
      */
     function dataFormatterTip(value,row,index) {
         if (value) {
-            return "<span data-toggle='tooltip' data-placement='left' title='" + value + "'>" + value + "</span>";
+            return '<a href="javascript:openViewHandler(\''+ row.id +'\')">'+value+'</a>';
         } else {
             return "";
         }
     }
-    $(function() {
-        $('#exceptionLogGrid').on('load-success.bs.table', function () {
-            $('[data-toggle="tooltip"]').tooltip()
-        })
-    })
+
+    /**
+     * 打开查看
+     * @param id
+     */
+    function openViewHandler(id) {
+        let str =  $('#exceptionLogGrid').bootstrapTable('getRowByUniqueId', id);
+        $('#viewModal .modal-body .exceptions-content').html(str.content );
+        $('#viewModal .modal-body .exceptions-mark').html(str.notes );
+        $('#viewModal').modal('show')
+    }
 
 </script>
 
