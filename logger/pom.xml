@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.dili</groupId>
 	<artifactId>logger</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.2-SNAPSHOT</version>
 	<name>logger</name>
 	<description>日志收集</description>
 
@@ -12,7 +12,7 @@
 	<parent>
 		<artifactId>dili-logger</artifactId>
 		<groupId>com.dili</groupId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>0.0.2-SNAPSHOT</version>
 	</parent>
 
 	<properties>
@@ -89,7 +89,7 @@
 		<dependency>
 			<groupId>cn.hutool</groupId>
 			<artifactId>hutool-all</artifactId>
-			<version>5.3.1</version>
+			<version>5.3.7</version>
 		</dependency>
 		<!-- 内部包  -->
 
