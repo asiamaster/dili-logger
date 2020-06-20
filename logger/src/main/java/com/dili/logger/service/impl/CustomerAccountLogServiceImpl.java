@@ -145,6 +145,9 @@ public class CustomerAccountLogServiceImpl implements CustomerAccountLogService<
         // 在queryBuilder对象中自定义查询
         BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery();
         if (Objects.nonNull(condition)) {
+            if (Objects.nonNull(condition.getCustomerId())) {
+                queryBuilder.must(QueryBuilders.termQuery("customerId", condition.getCustomerId()));
+            }
             if (Objects.nonNull(condition.getOperatorId())) {
                 queryBuilder.must(QueryBuilders.termQuery("operatorId", condition.getOperatorId()));
             }
@@ -168,6 +171,9 @@ public class CustomerAccountLogServiceImpl implements CustomerAccountLogService<
             }
             if (Objects.nonNull(condition.getFundTypeId())){
                 queryBuilder.must(QueryBuilders.termQuery("fundTypeId", condition.getFundTypeId()));
+            }
+            if (Objects.nonNull(condition.getPaymentTypeId())){
+                queryBuilder.must(QueryBuilders.termQuery("paymentTypeId", condition.getPaymentTypeId()));
             }
             if (Objects.nonNull(condition.getMarketId())) {
                 queryBuilder.must(QueryBuilders.termQuery("marketId", condition.getMarketId()));

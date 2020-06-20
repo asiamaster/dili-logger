@@ -11,6 +11,21 @@ package com.dili.logger.sdk.domain;
 public class CustomerAccountLog extends BaseLog {
 
     /**
+     * 业务卡号
+     */
+    private String cardNo;
+
+    /**
+     * 客户ID
+     */
+    private Long customerId;
+
+    /**
+     * 客户名称
+     */
+    private String customerName;
+
+    /**
      * 资金项目ID
      */
     private Long fundItemId;
@@ -19,9 +34,17 @@ public class CustomerAccountLog extends BaseLog {
      */
     private String fundItemName;
     /**
-     * 操作金额
+     * 初始金额
      */
-    private Long amount;
+    private Long InitialAmount;
+    /**
+     * 交易金额
+     */
+    private Long tradeAmount;
+    /**
+     * 交易后余额
+     */
+    private Long balance;
     /**
      * 资金类型ID
      */
@@ -31,43 +54,89 @@ public class CustomerAccountLog extends BaseLog {
      */
     private String fundTypeName;
 
+    /**
+     * 交易收支类型ID
+     */
+    private Long paymentTypeId;
+
+    /**
+     * 交易收支类型名称
+     */
+    private String paymentTypeName;
+
+
+    /********************getter  setter *************************/
+
+    public String getCardNo() {
+        return cardNo;
+    }
+    public void setCardNo(String cardNo) {
+        this.cardNo = cardNo;
+    }
+    public Long getCustomerId() {
+        return customerId;
+    }
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
+    }
+    public String getCustomerName() {
+        return customerName;
+    }
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
     public Long getFundItemId() {
         return fundItemId;
     }
-
     public void setFundItemId(Long fundItemId) {
         this.fundItemId = fundItemId;
     }
-
     public String getFundItemName() {
         return fundItemName;
     }
-
     public void setFundItemName(String fundItemName) {
         this.fundItemName = fundItemName;
     }
-
-    public Long getAmount() {
-        return amount;
+    public Long getInitialAmount() {
+        return InitialAmount;
     }
-
-    public void setAmount(Long amount) {
-        this.amount = amount;
+    public void setInitialAmount(Long initialAmount) {
+        InitialAmount = initialAmount;
     }
-
+    public Long getTradeAmount() {
+        return tradeAmount;
+    }
+    public void setTradeAmount(Long tradeAmount) {
+        this.tradeAmount = tradeAmount;
+    }
+    public Long getBalance() {
+        return balance;
+    }
+    public void setBalance(Long balance) {
+        this.balance = balance;
+    }
     public Long getFundTypeId() {
         return fundTypeId;
     }
-
     public void setFundTypeId(Long fundTypeId) {
         this.fundTypeId = fundTypeId;
     }
-
     public String getFundTypeName() {
         return fundTypeName;
     }
-
     public void setFundTypeName(String fundTypeName) {
         this.fundTypeName = fundTypeName;
+    }
+    public Long getPaymentTypeId() {
+        return paymentTypeId;
+    }
+    public void setPaymentTypeId(Long paymentTypeId) {
+        this.paymentTypeId = paymentTypeId;
+    }
+    public String getPaymentTypeName() {
+        return paymentTypeName;
+    }
+    public void setPaymentTypeName(String paymentTypeName) {
+        this.paymentTypeName = paymentTypeName;
     }
 }

@@ -22,6 +22,24 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 public class CustomerAccountLog extends BaseLog {
 
     /**
+     * 业务卡号
+     */
+    @Field(type = FieldType.Keyword)
+    private String cardNo;
+
+    /**
+     * 客户ID
+     */
+    @Field(type = FieldType.Long)
+    private Long customerId;
+
+    /**
+     * 客户名称
+     */
+    @Field(type = FieldType.Text, index = false)
+    private String customerName;
+
+    /**
      * 资金项目ID
      */
     @Field(type = FieldType.Long)
@@ -32,10 +50,20 @@ public class CustomerAccountLog extends BaseLog {
     @Field(type = FieldType.Text, index = false)
     private String fundItemName;
     /**
-     * 操作金额
+     * 初始金额
      */
-    @Field(type = FieldType.Keyword)
-    private Long amount;
+    @Field(type = FieldType.Long)
+    private Long InitialAmount;
+    /**
+     * 交易金额
+     */
+    @Field(type = FieldType.Long)
+    private Long tradeAmount;
+    /**
+     * 交易后余额
+     */
+    @Field(type = FieldType.Long)
+    private Long balance;
     /**
      * 资金类型ID
      */
@@ -46,4 +74,16 @@ public class CustomerAccountLog extends BaseLog {
      */
     @Field(type = FieldType.Text, index = false)
     private String fundTypeName;
+
+    /**
+     * 交易收支类型ID
+     */
+    @Field(type = FieldType.Long)
+    private Long paymentTypeId;
+
+    /**
+     * 交易收支类型名称
+     */
+    @Field(type = FieldType.Text, index = false)
+    private String paymentTypeName;
 }
