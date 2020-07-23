@@ -26,17 +26,6 @@ import org.springframework.context.annotation.Scope;
 public class LoggerRabbitConfiguration {
 
     @Bean
-    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-    //必须是prototype类型
-    //rabbitTemplate是thread safe的，主要是channel不能共用，但是在rabbitTemplate源码里channel是threadlocal的，所以singleton没问题。
-    //但是rabbitTemplate要设置回调类，如果是singleton，回调类就只能有一个，所以如果想要设置不同的回调类，就要设置为prototype的scope
-    //如果需要在生产者需要消息发送后的回调，需要对rabbitTemplate设置ConfirmCallback对象，由于不同的生产者需要对应不同的ConfirmCallback，
-    //如果rabbitTemplate设置为单例bean，则所有的rabbitTemplate实际的ConfirmCallback为最后一次申明的ConfirmCallback。
-    public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
-        return new RabbitTemplate(connectionFactory);
-    }
-
-    @Bean
     @ConditionalOnMissingBean(name = "messageConverter")
     public MessageConverter messageConverter() {
         return new Jackson2JsonMessageConverter();

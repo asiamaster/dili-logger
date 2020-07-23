@@ -1,6 +1,7 @@
 package com.dili.logger.sdk.aop;
 
 import com.alibaba.fastjson.JSON;
+import com.dili.commons.rabbitmq.RabbitMQMessageService;
 import com.dili.logger.sdk.annotation.BusinessLogger;
 import com.dili.logger.sdk.base.LogBuilder;
 import com.dili.logger.sdk.base.LoggerContext;
@@ -56,7 +57,7 @@ public class LoggerAspect {
     GroupTemplate groupTemplate;
 
     @Autowired
-    private MsgService msgService;
+    private RabbitMQMessageService rabbitMQMessageService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LoggerAspect.class);
 
@@ -80,7 +81,7 @@ public class LoggerAspect {
             if(retValue instanceof BaseOutput && !((BaseOutput)retValue).isSuccess()){
                 return retValue;
             }
-            msgService.sendMsg(LoggerConstant.MQ_LOGGER_ADD_BUSINESS_KEY, JSON.toJSONString(getBusinessLog(point)));
+            rabbitMQMessageService.send(LoggerConstant.MQ_LOGGER_TOPIC_EXCHANGE, LoggerConstant.MQ_LOGGER_ADD_BUSINESS_KEY, JSON.toJSONString(getBusinessLog(point)));
             return retValue;
         }catch (Exception e){
             LOGGER.error(e.getMessage());
