@@ -1,5 +1,6 @@
 package com.dili.logger.sdk.boot;
 
+import com.dili.logger.sdk.component.SendFailedMessageHolder;
 import com.dili.logger.sdk.dto.CorrelationDataExt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,10 +21,8 @@ import org.springframework.stereotype.Component;
 public class LoggerRabbitProducerConfiguration implements RabbitTemplate.ConfirmCallback, RabbitTemplate.ReturnCallback {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(LoggerRabbitProducerConfiguration.class);
-    //消息发送重试次数
-    private static final int RETRY_COUNT = 3;
-    @Autowired
-    private RabbitTemplate rabbitTemplate;
+//    @Autowired
+//    private RabbitTemplate rabbitTemplate;
 
 //    @PostConstruct
 //    public void init(){
@@ -40,17 +39,13 @@ public class LoggerRabbitProducerConfiguration implements RabbitTemplate.Confirm
             // 根据业务逻辑实现消息补偿机制
             if (correlationData instanceof CorrelationDataExt) {
                 CorrelationDataExt messageCorrelationData = (CorrelationDataExt) correlationData;
-                int retryCount = messageCorrelationData.getRetryCount();
-                String exchange = messageCorrelationData.getExchange();
-                Object message = messageCorrelationData.getMessage();
-                String routingKey = messageCorrelationData.getRoutingKey();
-                if(retryCount < RETRY_COUNT ){
-                    //重试次数+1
-                    messageCorrelationData.setRetryCount(retryCount + 1);
-                    rabbitTemplate.convertSendAndReceive(exchange, routingKey, message, correlationData);
-                }else{
-                    LOGGER.error("消息到达Exchange失败，内容:{}，原因:{}", message, cause);
+                if (!ack) {
+                    //在请求主线程发送1万条消息的过程中，将rabbitmq关闭，这时请求主线程和ConfirmCallback线程都在等待Connection恢复，
+                    //然后重新启动rabbitmq，当程序重新建立Connection之后，这两个线程会死锁。
+                    //可行的方案：定时任务重发
+                    SendFailedMessageHolder.add(messageCorrelationData);
                 }
+//                LOGGER.error("消息到达Exchange失败，内容:{}，原因:{}", message, cause);
             }
         }
     }
