@@ -6,6 +6,7 @@ import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.dto.DTOUtils;
 import com.dili.uap.sdk.domain.User;
 import com.dili.uap.sdk.domain.UserTicket;
+import com.dili.uap.sdk.domain.dto.UserQuery;
 import com.dili.uap.sdk.rpc.UserRpc;
 import com.dili.uap.sdk.session.SessionContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,7 @@ public class UserRpcService {
      * @param user
      * @return
      */
-    public List<User> listByExample(User user) {
+    public List<User> listByExample(UserQuery user) {
         BaseOutput<List<User>> baseOutput = userRpc.listByExample(user);
         return baseOutput.isSuccess() ? baseOutput.getData() : Collections.emptyList();
     }
@@ -50,7 +51,7 @@ public class UserRpcService {
         if (null == userTicket) {
             return Collections.emptyList();
         }
-        User condition = DTOUtils.newInstance(User.class);
+        UserQuery condition = DTOUtils.newInstance(UserQuery.class);
         condition.setFirmCode(userTicket.getFirmCode());
         if (StrUtil.isNotBlank(realName)) {
             condition.setRealName(realName);
