@@ -177,6 +177,10 @@
 					<groupId>com.alibaba</groupId>
 					<artifactId>druid</artifactId>
 				</exclusion>
+				<exclusion>
+					<artifactId>logger-sdk</artifactId>
+					<groupId>com.dili</groupId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 	</dependencies>
