@@ -10,7 +10,8 @@ import com.dili.ss.constant.ResultCode;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.PageOutput;
 import com.dili.ss.mvc.util.RequestUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,12 +26,13 @@ import java.util.Objects;
  * @author yuehongbo
  * @date 2020/2/11 14:19
  */
+@RequiredArgsConstructor
+@Slf4j
 @RestController
 @RequestMapping("/api/businessLog")
 public class BusinessLogApiController {
 
-    @Autowired
-    private BusinessLogService businessLogService;
+    private final BusinessLogService businessLogService;
 
     /**
      * 保存业务日志数据
@@ -83,7 +85,13 @@ public class BusinessLogApiController {
      */
     @RequestMapping(value = "/listPage", method = {RequestMethod.POST})
     public PageOutput listPage(@RequestBody(required = false) BusinessLogQueryInput condition) {
-        return businessLogService.searchPage(condition);
+        try {
+            return businessLogService.searchPage(condition);
+        }catch (Throwable throwable){
+            log.error(String.format("分页查询业务日志异常[%s]",throwable.getMessage()),throwable);
+            return PageOutput.failure("数据查询异常");
+        }
+
     }
 
     /**
@@ -94,7 +102,12 @@ public class BusinessLogApiController {
      */
     @RequestMapping(value = "/list", method = {RequestMethod.POST})
     public BaseOutput list(@RequestBody(required = false) BusinessLogQueryInput condition) {
-        return businessLogService.list(condition);
+        try {
+            return businessLogService.list(condition);
+        }catch (Throwable throwable){
+            log.error(String.format("查询业务日志异常[%s]",throwable.getMessage()),throwable);
+            return PageOutput.failure("数据查询异常");
+        }
     }
 
 

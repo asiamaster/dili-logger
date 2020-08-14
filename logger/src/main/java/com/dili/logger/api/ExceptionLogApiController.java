@@ -10,7 +10,8 @@ import com.dili.ss.constant.ResultCode;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.PageOutput;
 import com.dili.ss.mvc.util.RequestUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,12 +26,13 @@ import java.util.Objects;
  * @author yuehongbo
  * @date 2020/2/11 14:19
  */
+@RequiredArgsConstructor
+@Slf4j
 @RestController
 @RequestMapping("/api/exceptionLog")
 public class ExceptionLogApiController {
 
-    @Autowired
-    private ExceptionLogService exceptionLogService;
+    private final ExceptionLogService exceptionLogService;
 
     /**
      * 保存异常日志数据
@@ -83,7 +85,12 @@ public class ExceptionLogApiController {
      */
     @RequestMapping(value = "/listPage", method = {RequestMethod.POST})
     public PageOutput listPage(@RequestBody(required = false) ExceptionLogQueryInput condition) {
-        return exceptionLogService.searchPage(condition);
+        try {
+            return exceptionLogService.searchPage(condition);
+        } catch (Throwable t) {
+            log.error(String.format("分页查询异常日志出现异常[%s]", t.getMessage()), t);
+            return PageOutput.failure("数据查询异常");
+        }
     }
 
     /**
@@ -94,7 +101,12 @@ public class ExceptionLogApiController {
      */
     @RequestMapping(value = "/list", method = {RequestMethod.POST})
     public BaseOutput list(@RequestBody(required = false) ExceptionLogQueryInput condition) {
-        return exceptionLogService.list(condition);
+        try {
+            return exceptionLogService.list(condition);
+        } catch (Throwable t) {
+            log.error(String.format("查询异常日志出现异常[%s]", t.getMessage()), t);
+            return PageOutput.failure("数据查询异常");
+        }
     }
 
 
