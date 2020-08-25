@@ -107,7 +107,10 @@ public class LoggerAspect {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        businessLog.setBusinessType(businessLogger.businessType());
+        //如果未显示的给业务类型赋值，则从注解中再拿取一次
+        if (StringUtils.isBlank(businessLog.getBusinessType())){
+            businessLog.setBusinessType(businessLogger.businessType());
+        }
         //如果未显示的给操作类型赋值，则从注解中再拿取一次
         if (StringUtils.isBlank(businessLog.getOperationType())) {
             businessLog.setOperationType(businessLogger.operationType());
