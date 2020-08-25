@@ -6,6 +6,11 @@ package com.dili.logger.sdk.glossary;
 public interface LoggerConstant {
 
     /**
+     * 业务类型
+     */
+    String LOG_BUSINESS_TYPE = "businessType";
+
+    /**
      * 日志备注信息
      */
     String LOG_NOTES_KEY = "notes";
