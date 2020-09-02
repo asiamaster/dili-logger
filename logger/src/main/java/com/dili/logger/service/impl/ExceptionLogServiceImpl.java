@@ -152,6 +152,9 @@ public class ExceptionLogServiceImpl implements ExceptionLogService {
         // 在queryBuilder对象中自定义查询
         BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery();
         if (Objects.nonNull(condition)) {
+            if (Objects.nonNull(condition.getSystemCode())) {
+                queryBuilder.must(QueryBuilders.termQuery("systemCode", condition.getSystemCode()));
+            }
             if (Objects.nonNull(condition.getOperatorId())) {
                 queryBuilder.must(QueryBuilders.termQuery("operatorId", condition.getOperatorId()));
             }
