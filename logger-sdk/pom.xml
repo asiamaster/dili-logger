@@ -11,7 +11,7 @@
     <parent>
         <artifactId>dili-logger</artifactId>
         <groupId>com.dili</groupId>
-        <version>0.0.2-SNAPSHOT</version>
+        <version>1.0.0-SNAPSHOT</version>
     </parent>
 
     <dependencies>
@@ -23,7 +23,7 @@
         <dependency>
             <groupId>com.dili</groupId>
             <artifactId>commons-server</artifactId>
-            <version>1.3.2-SNAPSHOT</version>
+            <version>1.3.4-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

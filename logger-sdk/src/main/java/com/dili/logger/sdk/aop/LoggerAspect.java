@@ -5,7 +5,6 @@ import com.dili.commons.rabbitmq.RabbitMQMessageService;
 import com.dili.logger.sdk.annotation.BusinessLogger;
 import com.dili.logger.sdk.base.LogBuilder;
 import com.dili.logger.sdk.base.LoggerContext;
-import com.dili.logger.sdk.component.MsgService;
 import com.dili.logger.sdk.domain.BusinessLog;
 import com.dili.logger.sdk.glossary.LoggerConstant;
 import com.dili.ss.domain.BaseOutput;
@@ -69,11 +68,14 @@ public class LoggerAspect {
      */
     @Around( "@annotation(com.dili.logger.sdk.annotation.BusinessLogger)")
     public Object businessLogAround(ProceedingJoinPoint point) throws Throwable {
-//        Method method = ((MethodSignature) point.getSignature()).getMethod();
-        LoggerContext.resetLocal();
         HttpServletRequest request = ((ServletRequestAttributes) (RequestContextHolder.currentRequestAttributes())).getRequest();
-        LoggerContext.put(request);
-
+        //当前线程是否包含Request，如果有，则说明在外层已经放入了Request，不需要清除ThreadLocal中的缓存
+        boolean containsRequest = false;
+        if(LoggerContext.getRequest() != null){
+            containsRequest = true;
+        }else {
+            LoggerContext.put(request);
+        }
         try {
             //先执行方法
             Object retValue = point.proceed();
@@ -86,6 +88,11 @@ public class LoggerAspect {
         }catch (Exception e){
             LOGGER.error(e.getMessage());
             return null;
+        }finally {
+            //如果当前线程是最外层AOP，则需要清除ThreadLocal缓存
+            if(!containsRequest) {
+                LoggerContext.resetLocal();
+            }
         }
 
     }
