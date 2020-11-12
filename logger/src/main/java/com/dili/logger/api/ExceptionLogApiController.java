@@ -3,6 +3,7 @@ package com.dili.logger.api;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.digest.MD5;
+import cn.hutool.json.JSONUtil;
 import com.dili.logger.domain.ExceptionLog;
 import com.dili.logger.sdk.domain.input.ExceptionLogQueryInput;
 import com.dili.logger.service.ExceptionLogService;
@@ -43,14 +44,19 @@ public class ExceptionLogApiController {
     @CrossOrigin(origins = "*")
     @RequestMapping(value = "/save", method = {RequestMethod.POST})
     public BaseOutput save(@RequestBody ExceptionLog condition, HttpServletRequest httpServletRequest) {
-        if (StrUtil.isBlank(condition.getRemoteIp())) {
-            condition.setRemoteIp(RequestUtils.getIpAddress(httpServletRequest));
+        try {
+            if (StrUtil.isBlank(condition.getRemoteIp())) {
+                condition.setRemoteIp(RequestUtils.getIpAddress(httpServletRequest));
+            }
+            if (StrUtil.isBlank(condition.getServerIp())) {
+                condition.setServerIp(httpServletRequest.getLocalAddr());
+            }
+            exceptionLogService.save(condition);
+            return BaseOutput.success();
+        } catch (Exception e) {
+            log.error(String.format("异常日志数据【%s】保存异常:%s", JSONUtil.toJsonStr(condition), e.getMessage()), e);
+            return BaseOutput.failure("数据保存异常");
         }
-        if (StrUtil.isBlank(condition.getServerIp())) {
-            condition.setServerIp(httpServletRequest.getLocalAddr());
-        }
-        exceptionLogService.save(condition);
-        return BaseOutput.success();
     }
 
     /**
@@ -61,20 +67,25 @@ public class ExceptionLogApiController {
     @CrossOrigin(origins = "*")
     @RequestMapping(value = "/batchSave", method = {RequestMethod.POST})
     public BaseOutput batchSave(@RequestBody List<ExceptionLog> exceptionLogList, HttpServletRequest httpServletRequest) {
-        String remoteIp = RequestUtils.getIpAddress(httpServletRequest);
-        String serverIp = httpServletRequest.getLocalAddr();
-        if (CollectionUtil.isNotEmpty(exceptionLogList)) {
-            exceptionLogList.forEach(l -> {
-                if (StrUtil.isBlank(l.getRemoteIp())) {
-                    l.setRemoteIp(remoteIp);
-                }
-                if (StrUtil.isBlank(l.getServerIp())) {
-                    l.setServerIp(serverIp);
-                }
-            });
+        try {
+            String remoteIp = RequestUtils.getIpAddress(httpServletRequest);
+            String serverIp = httpServletRequest.getLocalAddr();
+            if (CollectionUtil.isNotEmpty(exceptionLogList)) {
+                exceptionLogList.forEach(l -> {
+                    if (StrUtil.isBlank(l.getRemoteIp())) {
+                        l.setRemoteIp(remoteIp);
+                    }
+                    if (StrUtil.isBlank(l.getServerIp())) {
+                        l.setServerIp(serverIp);
+                    }
+                });
+            }
+            exceptionLogService.batchSave(exceptionLogList);
+            return BaseOutput.success();
+        } catch (Exception e) {
+            log.error(String.format("异常日志数据【%s】批量保存异常:%s", JSONUtil.toJsonStr(exceptionLogList), e.getMessage()), e);
+            return BaseOutput.failure("数据批量保存异常");
         }
-        exceptionLogService.batchSave(exceptionLogList);
-        return BaseOutput.success();
     }
 
     /**

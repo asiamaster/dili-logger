@@ -3,6 +3,7 @@ package com.dili.logger.controller;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.CalendarUtil;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.json.JSONUtil;
 import com.dili.logger.domain.ExceptionLog;
 import com.dili.logger.sdk.domain.input.ExceptionLogQueryInput;
 import com.dili.logger.service.ExceptionLogService;
@@ -12,7 +13,8 @@ import com.dili.ss.domain.PageOutput;
 import com.dili.ss.metadata.ValueProviderUtils;
 import com.dili.uap.sdk.domain.Firm;
 import com.google.common.collect.Lists;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,15 +32,15 @@ import java.util.stream.Collectors;
  * @author yuehongbo
  * @date 2020/3/2 10:26
  */
+@Slf4j
+@RequiredArgsConstructor
 @Controller
 @RequestMapping("/exceptionLog")
 public class ExceptionLogController {
 
-    @Autowired
-    private ExceptionLogService exceptionLogService;
+    private final ExceptionLogService exceptionLogService;
 
-    @Autowired
-    private FirmRpcService firmRpcService;
+    private final FirmRpcService firmRpcService;
 
     /**
      * 跳转到个人客户管理页面
@@ -65,22 +67,27 @@ public class ExceptionLogController {
      */
     @RequestMapping(value = "/listPage.action", method = {RequestMethod.POST})
     @ResponseBody
-    public String listPage(ExceptionLogQueryInput condition) throws Exception {
-        if (Objects.isNull(condition.getMarketId())) {
-            List<Firm> userFirms = firmRpcService.getCurrentUserFirms();
-            if (CollectionUtil.isEmpty(userFirms)) {
-                return new EasyuiPageOutput(0L, Collections.emptyList()).toString();
-            } else {
-                Set<Long> idSet = userFirms.stream().map(Firm::getId).collect(Collectors.toSet());
-                condition.setMarketIdSet(idSet);
+    public String listPage(ExceptionLogQueryInput condition) {
+        try {
+            if (Objects.isNull(condition.getMarketId())) {
+                List<Firm> userFirms = firmRpcService.getCurrentUserFirms();
+                if (CollectionUtil.isEmpty(userFirms)) {
+                    return new EasyuiPageOutput(0L, Collections.emptyList()).toString();
+                } else {
+                    Set<Long> idSet = userFirms.stream().map(Firm::getId).collect(Collectors.toSet());
+                    condition.setMarketIdSet(idSet);
+                }
             }
+            PageOutput<List<ExceptionLog>> pageOutput = exceptionLogService.searchPage(condition);
+            List<ExceptionLog> exceptionLogList = pageOutput.getData();
+            if (null == exceptionLogList) {
+                exceptionLogList = Lists.newArrayList();
+            }
+            List results = true ? ValueProviderUtils.buildDataByProvider(condition, exceptionLogList) : exceptionLogList;
+            return new EasyuiPageOutput(pageOutput.getTotal(), results).toString();
+        } catch (Exception e) {
+            log.error(String.format("异常日志数据【%s】查询异常:%s", JSONUtil.toJsonStr(condition), e.getMessage()), e);
+            return new EasyuiPageOutput(0L, Collections.emptyList()).toString();
         }
-        PageOutput<List<ExceptionLog>> pageOutput = exceptionLogService.searchPage(condition);
-        List<ExceptionLog> exceptionLogList = pageOutput.getData();
-        if (null == exceptionLogList) {
-            exceptionLogList = Lists.newArrayList();
-        }
-        List results = true ? ValueProviderUtils.buildDataByProvider(condition, exceptionLogList) : exceptionLogList;
-        return new EasyuiPageOutput(pageOutput.getTotal(), results).toString();
     }
 }
