@@ -20,7 +20,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @ToString(callSuper = true)
-@Document(indexName = "dili-exception-logger", type = "exceptionLog")
+@Document(indexName = "dili-exception-logger")
 public class ExceptionLog extends BaseLog implements Serializable {
 
     private static final long serialVersionUID = 5204495241923955295L;
@@ -34,7 +34,7 @@ public class ExceptionLog extends BaseLog implements Serializable {
     /**
      * 冗余存储异常类型的显示值
      */
-    @Field(type = FieldType.Text, index = false)
+    @Field(type = FieldType.Text)
     private String exceptionTypeText;
 
 }

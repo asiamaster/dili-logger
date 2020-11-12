@@ -3,6 +3,7 @@ package com.dili.logger.service.impl;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import com.dili.logger.config.ESConfig;
+import com.dili.logger.domain.BusinessLog;
 import com.dili.logger.domain.ExceptionLog;
 import com.dili.logger.mapper.ExceptionLogRepository;
 import com.dili.logger.sdk.domain.input.ExceptionLogQueryInput;
@@ -22,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.data.elasticsearch.core.ScrolledPage;
+import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Service;
 
@@ -57,8 +59,6 @@ public class ExceptionLogServiceImpl implements ExceptionLogService {
         QueryBuilder queryBuilder = produceQuery(condition);
         searchQuery.withQuery(queryBuilder);
         searchQuery.withSort(SortBuilders.fieldSort("createTime").order(SortOrder.DESC));
-        //是否需要循环遍历pageNum次轮询
-        Boolean isGetAll = false;
         //当前页码
         Integer pageNum = 1;
         /**
@@ -72,7 +72,6 @@ public class ExceptionLogServiceImpl implements ExceptionLogService {
                     pageNum = (int) Math.ceil((double) condition.getRows() / (double) ESConfig.getMaxSize());
                     condition.setRows(ESConfig.getMaxSize());
                 }
-                isGetAll = true;
             } else {
                 //ES 默认size 是10000，超过配置，则会直接报错
                 if (condition.getRows().compareTo(Integer.valueOf(ESConfig.getMaxSize())) > 0) {
@@ -80,26 +79,24 @@ public class ExceptionLogServiceImpl implements ExceptionLogService {
                 }
                 pageNum = condition.getPage();
             }
-            searchQuery.withPageable(PageRequest.of(pageNum - 1, condition.getRows()));
+        } else {
+            //如果未传入rows，因为es默认查询10条，所有，则认为查询所有(es允许的单页最大值)
+            condition.setRows(ESConfig.getMaxSize());
         }
-        ScrolledPage<ExceptionLog> pageInfo = elasticsearchRestTemplate.startScroll(5000, searchQuery.build(), ExceptionLog.class);
-        if (0 == pageInfo.getTotalElements()) {
+        searchQuery.withPageable(PageRequest.of(pageNum - 1, condition.getRows()));
+        SearchHits<ExceptionLog> search = elasticsearchRestTemplate.search(searchQuery.build(), ExceptionLog.class);
+        if (0 == search.getTotalHits() || search.getSearchHits().size() == 0) {
             return PageOutput.success();
         }
         PageOutput output = PageOutput.success();
-        output.setPages(pageInfo.getTotalPages());
-        output.setPageNum(pageNum).setTotal(Long.valueOf(pageInfo.getTotalElements()).intValue());
-        List<ExceptionLog> allData = Lists.newArrayList();
-        allData.addAll(pageInfo.getContent());
-        for (int i = 0; i < pageNum - 1; i++) {
-            pageInfo = elasticsearchRestTemplate.continueScroll(pageInfo.getScrollId(), 5000, ExceptionLog.class);
-            if (isGetAll) {
-                allData.addAll(pageInfo.getContent());
-            }
-        }
-        //释放es服务器资源
-        elasticsearchRestTemplate.clearScroll(pageInfo.getScrollId());
-        output.setData(isGetAll ? allData : pageInfo.getContent());
+        List<ExceptionLog> exceptionLogList = Lists.newArrayList();
+        output.setPageNum(pageNum).setTotal(search.getTotalHits());
+        int pageCount = (output.getTotal().intValue() + condition.getRows() - 1) / condition.getRows();
+        output.setPages(pageCount);
+        search.getSearchHits().forEach(t -> {
+            exceptionLogList.add(t.getContent());
+        });
+        output.setData(exceptionLogList);
         return output;
     }
 
@@ -184,6 +181,9 @@ public class ExceptionLogServiceImpl implements ExceptionLogService {
             }
             if (CollectionUtil.isNotEmpty(condition.getExceptionTypeSet())) {
                 queryBuilder.filter(QueryBuilders.termsQuery("exceptionType", condition.getExceptionTypeSet()));
+            }
+            if (StrUtil.isNotBlank(condition.getContent())){
+                queryBuilder.filter(QueryBuilders.matchQuery("content", condition.getContent()));
             }
         }
         return queryBuilder;

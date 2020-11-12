@@ -1,15 +1,18 @@
 package com.dili.logger.domain;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.elasticsearch.annotations.DateFormat;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * <B>Description</B>
@@ -61,13 +64,13 @@ public class BaseLog implements Serializable {
     /**
      * 日志类容
      */
-    @Field(type = FieldType.Text, index = false)
+    @Field(type = FieldType.Text)
     private String content;
 
     /**
      * 备注说明
      */
-    @Field(type = FieldType.Text, index = false)
+    @Field(type = FieldType.Text)
     private String notes;
 
     /**
@@ -91,13 +94,14 @@ public class BaseLog implements Serializable {
     /**
      * 操作人姓名
      */
-    @Field(type = FieldType.Text,index = false)
+    @Field(type = FieldType.Text)
     private String operatorName;
 
     /**
      * 日志时间
      */
-    @Field(type = FieldType.Date)
+    @Field(type = FieldType.Date, format = DateFormat.custom)
     @JSONField(format = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createTime;
 }

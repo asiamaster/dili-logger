@@ -40,6 +40,10 @@
                     <input type="text" class="form-control" id="businessCode" name="businessCode">
                 </div>
                 <div class="form-group col">
+                    <label for="">日志内容</label>
+                    <input type="text" class="form-control" id="content" name="content" placeholder="请输入">
+                </div>
+                <div class="form-group col">
                     <label for="_operatorId" class="">操作人</label>
                     <#bautoCompleteProvider _hiddenDomainClass="form-control" _hiddenDomainId="operatorId" _hiddenDomainName="operatorId" _displayDomainId="_operatorId" _displayDomainName="_operatorId" _placeholder="" _provider="userProvider" _validatorMethod="isSelected" _value="" _text="" />
                 </div>

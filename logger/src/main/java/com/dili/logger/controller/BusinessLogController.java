@@ -69,7 +69,7 @@ public class BusinessLogController {
         if (Objects.isNull(condition.getMarketId())) {
             List<Firm> userFirms = firmRpcService.getCurrentUserFirms();
             if (CollectionUtil.isEmpty(userFirms)) {
-                return new EasyuiPageOutput(0, Collections.emptyList()).toString();
+                return new EasyuiPageOutput(0L, Collections.emptyList()).toString();
             } else {
                 Set<Long> idSet = userFirms.stream().map(Firm::getId).collect(Collectors.toSet());
                 condition.setMarketIdSet(idSet);

@@ -23,17 +23,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<java.version>1.8</java.version>
-		<!--  XML生成路径  -->
-		<targetJavaProject>${basedir}/src/main/java</targetJavaProject>
-		<templateRootDir>${basedir}/mbg-templates</templateRootDir>
-		<projectdir>${basedir}</projectdir>
-		<targetResourcesProject>${basedir}/src/main/resources</targetResourcesProject>
-		<targetXMLPackage>mapper</targetXMLPackage>
-		<targetMapperPackage>com.dili.logger.mapper</targetMapperPackage>
-		<targetModelPackage>com.dili.logger.domain</targetModelPackage>
-		<targetServicePackage>com.dili.logger.service</targetServicePackage>
-		<targetControllerPackage>com.dili.logger.controller</targetControllerPackage>
+		<java.version>13</java.version>
 	</properties>
 
 
@@ -53,8 +43,8 @@
 				<version>3.8.1</version>
 				<!-- 编译JDK版本 -->
 				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
 					<encoding>UTF-8</encoding>
 					<parameters>true</parameters>
 				</configuration>

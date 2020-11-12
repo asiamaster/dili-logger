@@ -1,9 +1,5 @@
 package com.dili.logger.config;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.http.HttpHost;
 import org.elasticsearch.client.Node;
 import org.elasticsearch.client.RestClient;
@@ -15,20 +11,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.convert.ReadingConverter;
 import org.springframework.data.elasticsearch.config.AbstractElasticsearchConfiguration;
-import org.springframework.data.elasticsearch.core.EntityMapper;
 import org.springframework.data.elasticsearch.core.convert.ElasticsearchCustomConversions;
-import org.springframework.data.elasticsearch.core.geo.CustomGeoModule;
-import org.springframework.data.mapping.MappingException;
 
 import javax.annotation.PostConstruct;
-import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * <B>Description</B>
@@ -116,55 +106,55 @@ public class ESConfig extends AbstractElasticsearchConfiguration {
         return new RestHighLevelClient(builder);
     }
 
-    @Bean
-    @Override
-    public EntityMapper entityMapper() {
-        return new CustomEntityMapper();
-    }
-
-    /**
-     * 自定义实体映射
-     */
-    public class CustomEntityMapper implements EntityMapper {
-        private final ObjectMapper objectMapper;
-        public CustomEntityMapper() {
-            objectMapper = new ObjectMapper();
-            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            objectMapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
-            objectMapper.registerModule(new CustomGeoModule());
-            objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-            objectMapper.disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
-            objectMapper.registerModule(new JavaTimeModule());
-        }
-
-        @Override
-        public String mapToString(Object object) throws IOException {
-            return objectMapper.writeValueAsString(object);
-        }
-
-        @Override
-        public <T> T mapToObject(String source, Class<T> clazz) throws IOException {
-            return objectMapper.readValue(source, clazz);
-        }
-
-        @Override
-        public Map<String, Object> mapObject(Object source) {
-            try {
-                return objectMapper.readValue(mapToString(source), HashMap.class);
-            } catch (IOException e) {
-                throw new MappingException(e.getMessage(), e);
-            }
-        }
-
-        @Override
-        public <T> T readObject(Map<String, Object> source, Class<T> targetType) {
-            try {
-                return mapToObject(mapToString(source), targetType);
-            } catch (IOException e) {
-                throw new MappingException(e.getMessage(), e);
-            }
-        }
-    }
+//    @Bean
+//    @Override
+//    public EntityMapper entityMapper() {
+//        return new CustomEntityMapper();
+//    }
+//
+//    /**
+//     * 自定义实体映射
+//     */
+//    public class CustomEntityMapper implements EntityMapper {
+//        private final ObjectMapper objectMapper;
+//        public CustomEntityMapper() {
+//            objectMapper = new ObjectMapper();
+//            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+//            objectMapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+//            objectMapper.registerModule(new CustomGeoModule());
+//            objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+//            objectMapper.disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
+//            objectMapper.registerModule(new JavaTimeModule());
+//        }
+//
+//        @Override
+//        public String mapToString(Object object) throws IOException {
+//            return objectMapper.writeValueAsString(object);
+//        }
+//
+//        @Override
+//        public <T> T mapToObject(String source, Class<T> clazz) throws IOException {
+//            return objectMapper.readValue(source, clazz);
+//        }
+//
+//        @Override
+//        public Map<String, Object> mapObject(Object source) {
+//            try {
+//                return objectMapper.readValue(mapToString(source), HashMap.class);
+//            } catch (IOException e) {
+//                throw new MappingException(e.getMessage(), e);
+//            }
+//        }
+//
+//        @Override
+//        public <T> T readObject(Map<String, Object> source, Class<T> targetType) {
+//            try {
+//                return mapToObject(mapToString(source), targetType);
+//            } catch (IOException e) {
+//                throw new MappingException(e.getMessage(), e);
+//            }
+//        }
+//    }
 
     /**
      * 默认的converter不支持long到localdatime的转换，从elasticsearch读取的时候会报错，所以在这里添加一个。
