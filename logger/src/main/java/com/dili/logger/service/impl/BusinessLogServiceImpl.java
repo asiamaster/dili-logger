@@ -13,18 +13,21 @@ import com.dili.ss.domain.PageOutput;
 import com.dili.ss.sid.util.IdUtils;
 import com.dili.uap.sdk.domain.DataDictionaryValue;
 import com.google.common.collect.Lists;
+import lombok.RequiredArgsConstructor;
+import org.apache.commons.beanutils.PropertyUtils;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -38,17 +41,22 @@ import java.util.Objects;
  * @author yuehongbo
  * @date 2020/2/10 18:12
  */
+@RequiredArgsConstructor
 @Service
 public class BusinessLogServiceImpl implements BusinessLogService<BusinessLog> {
 
-    @Autowired
-    private BusinessLogRepository businessLogRepository;
+    private final BusinessLogRepository businessLogRepository;
+    private final ElasticsearchRestTemplate elasticsearchRestTemplate;
+    private final DataDictionaryRpcService dataDictionaryRpcService;
 
-    @Autowired
-    private ElasticsearchRestTemplate elasticsearchRestTemplate;
 
-    @Autowired
-    private DataDictionaryRpcService dataDictionaryRpcService;
+
+    //高亮线上的前缀标签
+    String preTag = "<font color=\"#dd4b39\"><strong>";
+    //高亮线上的后缀标签
+    String postTag = "</strong></font>";
+
+    private String highlight_content = "content";
 
     @Override
     public PageOutput<List<BusinessLog>> searchPage(BusinessLogQueryInput condition) {
@@ -57,6 +65,7 @@ public class BusinessLogServiceImpl implements BusinessLogService<BusinessLog> {
         QueryBuilder queryBuilder = produceQuery(condition);
         searchQuery.withQuery(queryBuilder);
         searchQuery.withSort(SortBuilders.fieldSort("createTime").order(SortOrder.DESC));
+        searchQuery.withHighlightFields(new HighlightBuilder.Field(highlight_content).preTags(preTag).postTags(postTag));
         //当前页码
         Integer pageNum = 1;
         /**
@@ -82,17 +91,19 @@ public class BusinessLogServiceImpl implements BusinessLogService<BusinessLog> {
             condition.setRows(ESConfig.getMaxSize());
         }
         searchQuery.withPageable(PageRequest.of(pageNum - 1, condition.getRows()));
-        SearchHits<BusinessLog> search = elasticsearchRestTemplate.search(searchQuery.build(), BusinessLog.class);
-        if (0 == search.getTotalHits() || search.getSearchHits().size() == 0) {
+        SearchHits<BusinessLog> searchHits = elasticsearchRestTemplate.search(searchQuery.build(), BusinessLog.class);
+        if (0 == searchHits.getTotalHits() || searchHits.getSearchHits().size() == 0) {
             return PageOutput.success();
         }
         PageOutput output = PageOutput.success();
         List<BusinessLog> businessLogList = Lists.newArrayList();
-        output.setPageNum(pageNum).setTotal(search.getTotalHits());
+        output.setPageNum(pageNum).setTotal(searchHits.getTotalHits());
         int pageCount = (output.getTotal().intValue() + condition.getRows() - 1) / condition.getRows();
         output.setPages(pageCount);
-        search.getSearchHits().forEach(t -> {
-            businessLogList.add(t.getContent());
+        searchHits.getSearchHits().forEach(t -> {
+            BusinessLog businessLog = t.getContent();
+            populateHighLightedFields(businessLog,t.getHighlightFields());
+            businessLogList.add(businessLog);
         });
         output.setData(businessLogList);
         return output;
@@ -183,9 +194,28 @@ public class BusinessLogServiceImpl implements BusinessLogService<BusinessLog> {
                 queryBuilder.filter(QueryBuilders.termsQuery("operationType", condition.getOperationTypeSet()));
             }
             if (StrUtil.isNotBlank(condition.getContent())){
-                queryBuilder.filter(QueryBuilders.matchQuery("content", condition.getContent()));
+                queryBuilder.filter(QueryBuilders.matchPhraseQuery("content", condition.getContent()));
             }
         }
         return queryBuilder;
+    }
+
+
+    /**
+     * 使用beanutils工具给对象的属性赋值
+     *
+     * @param result
+     * @param highlightFields
+     * @param <T>
+     */
+    private <T> void populateHighLightedFields(T result, Map<String, List<String>> highlightFields) {
+        highlightFields.forEach((k, v) -> {
+            try {
+                PropertyUtils.setProperty(result, k, v.get(0));
+            } catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException e) {
+//                throw new ElasticsearchException("failed to set highlighted value for field: " + field.getName()
+//                        + " with value: " + Arrays.toString(field.getFragments()), e);
+            }
+        });
     }
 }

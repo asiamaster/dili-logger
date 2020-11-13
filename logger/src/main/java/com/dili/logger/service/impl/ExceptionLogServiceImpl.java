@@ -3,7 +3,6 @@ package com.dili.logger.service.impl;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import com.dili.logger.config.ESConfig;
-import com.dili.logger.domain.BusinessLog;
 import com.dili.logger.domain.ExceptionLog;
 import com.dili.logger.mapper.ExceptionLogRepository;
 import com.dili.logger.sdk.domain.input.ExceptionLogQueryInput;
@@ -22,7 +21,6 @@ import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
-import org.springframework.data.elasticsearch.core.ScrolledPage;
 import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Service;
@@ -84,16 +82,16 @@ public class ExceptionLogServiceImpl implements ExceptionLogService {
             condition.setRows(ESConfig.getMaxSize());
         }
         searchQuery.withPageable(PageRequest.of(pageNum - 1, condition.getRows()));
-        SearchHits<ExceptionLog> search = elasticsearchRestTemplate.search(searchQuery.build(), ExceptionLog.class);
-        if (0 == search.getTotalHits() || search.getSearchHits().size() == 0) {
+        SearchHits<ExceptionLog> searchHits = elasticsearchRestTemplate.search(searchQuery.build(), ExceptionLog.class);
+        if (0 == searchHits.getTotalHits() || searchHits.getSearchHits().size() == 0) {
             return PageOutput.success();
         }
         PageOutput output = PageOutput.success();
         List<ExceptionLog> exceptionLogList = Lists.newArrayList();
-        output.setPageNum(pageNum).setTotal(search.getTotalHits());
+        output.setPageNum(pageNum).setTotal(searchHits.getTotalHits());
         int pageCount = (output.getTotal().intValue() + condition.getRows() - 1) / condition.getRows();
         output.setPages(pageCount);
-        search.getSearchHits().forEach(t -> {
+        searchHits.getSearchHits().forEach(t -> {
             exceptionLogList.add(t.getContent());
         });
         output.setData(exceptionLogList);
@@ -183,7 +181,7 @@ public class ExceptionLogServiceImpl implements ExceptionLogService {
                 queryBuilder.filter(QueryBuilders.termsQuery("exceptionType", condition.getExceptionTypeSet()));
             }
             if (StrUtil.isNotBlank(condition.getContent())){
-                queryBuilder.filter(QueryBuilders.matchQuery("content", condition.getContent()));
+                queryBuilder.filter(QueryBuilders.matchPhraseQuery("content", condition.getContent()));
             }
         }
         return queryBuilder;
