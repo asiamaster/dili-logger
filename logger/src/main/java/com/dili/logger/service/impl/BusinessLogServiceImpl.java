@@ -2,6 +2,7 @@ package com.dili.logger.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
+import com.dili.logger.component.ElasticsearchUtil;
 import com.dili.logger.config.ESConfig;
 import com.dili.logger.domain.BusinessLog;
 import com.dili.logger.mapper.BusinessLogRepository;
@@ -12,8 +13,6 @@ import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.PageOutput;
 import com.dili.ss.sid.util.IdUtils;
 import com.dili.uap.sdk.domain.DataDictionaryValue;
-import com.google.common.collect.Lists;
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -21,9 +20,9 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
-import org.springframework.data.elasticsearch.core.SearchHits;
+import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Service;
 
@@ -41,15 +40,16 @@ import java.util.Objects;
  * @author yuehongbo
  * @date 2020/2/10 18:12
  */
-@RequiredArgsConstructor
 @Service
-public class BusinessLogServiceImpl implements BusinessLogService<BusinessLog> {
+public class BusinessLogServiceImpl extends BaseLogServiceImpl<BusinessLog> implements BusinessLogService<BusinessLog> {
 
-    private final BusinessLogRepository businessLogRepository;
-    private final ElasticsearchRestTemplate elasticsearchRestTemplate;
-    private final DataDictionaryRpcService dataDictionaryRpcService;
-
-
+    private static final IndexCoordinates index = IndexCoordinates.of("dili-business-logger");
+    @Autowired
+    private BusinessLogRepository businessLogRepository;
+    @Autowired
+    private DataDictionaryRpcService dataDictionaryRpcService;
+    @Autowired
+    private ElasticsearchUtil elasticsearchUtil;
 
     //高亮线上的前缀标签
     String preTag = "<font color=\"#dd4b39\"><strong>";
@@ -68,45 +68,43 @@ public class BusinessLogServiceImpl implements BusinessLogService<BusinessLog> {
         searchQuery.withHighlightFields(new HighlightBuilder.Field(highlight_content).preTags(preTag).postTags(postTag));
         //当前页码
         Integer pageNum = 1;
+        //是否需要滚动查询
+        Boolean scrollSearch = false;
+        //是否超出size限制
+        Boolean overrun = false;
         /**
          * 由于es 默认最大允许size有限，所以需要针对size进行数据转换操作
          */
         if (Objects.nonNull(condition.getRows()) && condition.getRows() > 0) {
+            //ES 默认size 有限制，超过配置，则会直接报错,所以需要特殊处理
+            if (condition.getRows().compareTo(Integer.valueOf(ESConfig.getMaxSize())) > 0) {
+                overrun = true;
+            }
             //传入的页码是否为空
-            boolean b = Objects.isNull(condition.getPage());
-            if (b) {
-                if (condition.getRows().compareTo(Integer.valueOf(ESConfig.getMaxSize())) > 0) {
-                    pageNum = (int) Math.ceil((double) condition.getRows() / (double) ESConfig.getMaxSize());
-                    condition.setRows(ESConfig.getMaxSize());
-                }
-            } else {
-                //ES 默认size 是10000，超过配置，则会直接报错
-                if (condition.getRows().compareTo(Integer.valueOf(ESConfig.getMaxSize())) > 0) {
-                    return PageOutput.failure("分页-每页显示条数过多，暂且不支持");
+            if (Objects.nonNull(condition.getPage())) {
+                //如果是查询第一页，而且 size 超限，则需要滚动查询
+                if (condition.getPage() == 1) {
+                    //ES size 有限制，超过配置，则会直接报错
+                    if (overrun) {
+                        scrollSearch = true;
+                    }
+                } else {
+                    if (overrun) {
+                        return PageOutput.failure("分页-每页显示条数过多，暂且不支持");
+                    }
                 }
                 pageNum = condition.getPage();
+            } else {
+                if (overrun) {
+                    scrollSearch = true;
+                }
             }
         } else {
             //如果未传入rows，因为es默认查询10条，所有，则认为查询所有(es允许的单页最大值)
             condition.setRows(ESConfig.getMaxSize());
         }
         searchQuery.withPageable(PageRequest.of(pageNum - 1, condition.getRows()));
-        SearchHits<BusinessLog> searchHits = elasticsearchRestTemplate.search(searchQuery.build(), BusinessLog.class);
-        if (0 == searchHits.getTotalHits() || searchHits.getSearchHits().size() == 0) {
-            return PageOutput.success();
-        }
-        PageOutput output = PageOutput.success();
-        List<BusinessLog> businessLogList = Lists.newArrayList();
-        output.setPageNum(pageNum).setTotal(searchHits.getTotalHits());
-        int pageCount = (output.getTotal().intValue() + condition.getRows() - 1) / condition.getRows();
-        output.setPages(pageCount);
-        searchHits.getSearchHits().forEach(t -> {
-            BusinessLog businessLog = t.getContent();
-            populateHighLightedFields(businessLog,t.getHighlightFields());
-            businessLogList.add(businessLog);
-        });
-        output.setData(businessLogList);
-        return output;
+        return elasticsearchUtil.searchData(scrollSearch, searchQuery.build(), BusinessLog.class, index);
     }
 
     @Override
@@ -178,10 +176,10 @@ public class BusinessLogServiceImpl implements BusinessLogService<BusinessLog> {
             if (Objects.nonNull(condition.getCreateTimeEnd())) {
                 queryBuilder.filter(QueryBuilders.rangeQuery("createTime").lte(condition.getCreateTimeEnd()));
             }
-            if (StrUtil.isNotBlank(condition.getBusinessCode())){
+            if (StrUtil.isNotBlank(condition.getBusinessCode())) {
                 queryBuilder.must(QueryBuilders.termQuery("businessCode", condition.getBusinessCode()));
             }
-            if (StrUtil.isNotBlank(condition.getOperationType())){
+            if (StrUtil.isNotBlank(condition.getOperationType())) {
                 queryBuilder.must(QueryBuilders.termQuery("operationType", condition.getOperationType()));
             }
             if (Objects.nonNull(condition.getMarketId())) {
@@ -193,8 +191,8 @@ public class BusinessLogServiceImpl implements BusinessLogService<BusinessLog> {
             if (CollectionUtil.isNotEmpty(condition.getOperationTypeSet())) {
                 queryBuilder.filter(QueryBuilders.termsQuery("operationType", condition.getOperationTypeSet()));
             }
-            if (StrUtil.isNotBlank(condition.getContent())){
-                queryBuilder.filter(QueryBuilders.matchPhraseQuery("content", condition.getContent()));
+            if (StrUtil.isNotBlank(condition.getContent())) {
+                queryBuilder.filter(QueryBuilders.matchPhrasePrefixQuery("content", condition.getContent()));
             }
         }
         return queryBuilder;

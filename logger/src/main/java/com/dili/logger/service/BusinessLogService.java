@@ -15,7 +15,7 @@ import java.util.List;
  * @author yuehongbo
  * @date 2020/2/10 18:03
  */
-public interface BusinessLogService<T> {
+public interface BusinessLogService<T> extends BaseLogService<T> {
 
     /**
      * 分页查询操作日志信息

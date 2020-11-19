@@ -2,6 +2,7 @@ package com.dili.logger.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
+import com.dili.logger.component.ElasticsearchUtil;
 import com.dili.logger.config.ESConfig;
 import com.dili.logger.domain.ExceptionLog;
 import com.dili.logger.mapper.ExceptionLogRepository;
@@ -12,7 +13,6 @@ import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.PageOutput;
 import com.dili.ss.sid.util.IdUtils;
 import com.dili.uap.sdk.domain.DataDictionaryValue;
-import com.google.common.collect.Lists;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -20,8 +20,7 @@ import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
-import org.springframework.data.elasticsearch.core.SearchHits;
+import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Service;
 
@@ -41,14 +40,13 @@ import java.util.Objects;
 @Service
 public class ExceptionLogServiceImpl implements ExceptionLogService {
 
+    private static final IndexCoordinates index = IndexCoordinates.of("dili-exception-logger");
     @Autowired
     private ExceptionLogRepository exceptionLogRepository;
-
-    @Autowired
-    private ElasticsearchRestTemplate elasticsearchRestTemplate;
-
     @Autowired
     private DataDictionaryRpcService dataDictionaryRpcService;
+    @Autowired
+    private ElasticsearchUtil elasticsearchUtil;
 
     @Override
     public PageOutput<List<ExceptionLog>> searchPage(ExceptionLogQueryInput condition) {
@@ -59,43 +57,43 @@ public class ExceptionLogServiceImpl implements ExceptionLogService {
         searchQuery.withSort(SortBuilders.fieldSort("createTime").order(SortOrder.DESC));
         //当前页码
         Integer pageNum = 1;
+        //是否需要滚动查询
+        Boolean scrollSearch = false;
+        //是否超出size限制
+        Boolean overrun = false;
         /**
          * 由于es 默认最大允许size有限，所以需要针对size进行数据转换操作
          */
         if (Objects.nonNull(condition.getRows()) && condition.getRows() > 0) {
+            //ES 默认size 有限制，超过配置，则会直接报错,所以需要特殊处理
+            if (condition.getRows().compareTo(Integer.valueOf(ESConfig.getMaxSize())) > 0) {
+                overrun = true;
+            }
             //传入的页码是否为空
-            boolean b = Objects.isNull(condition.getPage());
-            if (b) {
-                if (condition.getRows().compareTo(Integer.valueOf(ESConfig.getMaxSize())) > 0) {
-                    pageNum = (int) Math.ceil((double) condition.getRows() / (double) ESConfig.getMaxSize());
-                    condition.setRows(ESConfig.getMaxSize());
-                }
-            } else {
-                //ES 默认size 是10000，超过配置，则会直接报错
-                if (condition.getRows().compareTo(Integer.valueOf(ESConfig.getMaxSize())) > 0) {
-                    return PageOutput.failure("分页-每页显示条数过多，暂且不支持");
+            if (Objects.nonNull(condition.getPage())) {
+                //如果是查询第一页，而且 size 超限，则需要滚动查询
+                if (condition.getPage() == 1) {
+                    //ES size 有限制，超过配置，则会直接报错
+                    if (overrun) {
+                        scrollSearch = true;
+                    }
+                } else {
+                    if (overrun) {
+                        return PageOutput.failure("分页-每页显示条数过多，暂且不支持");
+                    }
                 }
                 pageNum = condition.getPage();
+            } else {
+                if (overrun) {
+                    scrollSearch = true;
+                }
             }
         } else {
             //如果未传入rows，因为es默认查询10条，所有，则认为查询所有(es允许的单页最大值)
             condition.setRows(ESConfig.getMaxSize());
         }
         searchQuery.withPageable(PageRequest.of(pageNum - 1, condition.getRows()));
-        SearchHits<ExceptionLog> searchHits = elasticsearchRestTemplate.search(searchQuery.build(), ExceptionLog.class);
-        if (0 == searchHits.getTotalHits() || searchHits.getSearchHits().size() == 0) {
-            return PageOutput.success();
-        }
-        PageOutput output = PageOutput.success();
-        List<ExceptionLog> exceptionLogList = Lists.newArrayList();
-        output.setPageNum(pageNum).setTotal(searchHits.getTotalHits());
-        int pageCount = (output.getTotal().intValue() + condition.getRows() - 1) / condition.getRows();
-        output.setPages(pageCount);
-        searchHits.getSearchHits().forEach(t -> {
-            exceptionLogList.add(t.getContent());
-        });
-        output.setData(exceptionLogList);
-        return output;
+        return elasticsearchUtil.searchData(scrollSearch, searchQuery.build(), ExceptionLog.class, index);
     }
 
     @Override
@@ -181,7 +179,7 @@ public class ExceptionLogServiceImpl implements ExceptionLogService {
                 queryBuilder.filter(QueryBuilders.termsQuery("exceptionType", condition.getExceptionTypeSet()));
             }
             if (StrUtil.isNotBlank(condition.getContent())){
-                queryBuilder.filter(QueryBuilders.matchPhraseQuery("content", condition.getContent()));
+                queryBuilder.filter(QueryBuilders.matchPhrasePrefixQuery("content", condition.getContent()));
             }
         }
         return queryBuilder;
