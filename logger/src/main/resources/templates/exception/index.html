@@ -126,6 +126,9 @@
 </#bs4Body>
 
 <script>
+
+    let currentSelectRowIndex;
+
     /**
      * table参数组装
      * 可修改queryParams向服务器发送其余的参数
@@ -158,12 +161,19 @@
             return false;
         }
         $('#toolbar button').attr('disabled', false);
-        $('#exceptionLogGrid').bootstrapTable('refresh');
-
+        $('#exceptionLogGrid').bootstrapTable('refreshOptions', {pageNumber: 1});
     }
 
     $(function () {
-        $('#exceptionLogGrid').bootstrapTable('refreshOptions', {url: '/exceptionLog/listPage.action'});
+        $(window).resize(function () {
+            $('#exceptionLogGrid').bootstrapTable('resetView')
+        });
+        let size = ($(window).height() - $('#customerQueryForm').height() - 210) / 40;
+        size = size > 10 ? size : 10;
+        $('#exceptionLogGrid').bootstrapTable('refreshOptions', {
+            url: '/exceptionLog/listPage.action',
+            pageSize: parseInt(size)
+        });
     });
 
     /**

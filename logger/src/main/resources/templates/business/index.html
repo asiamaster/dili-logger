@@ -149,11 +149,19 @@
             return false;
         }
         $('#toolbar button').attr('disabled', false);
-        $('#businessLogGrid').bootstrapTable('refresh');
+        $('#businessLogGrid').bootstrapTable('refreshOptions', {pageNumber: 1});
     }
 
     $(function () {
-        $('#businessLogGrid').bootstrapTable('refreshOptions', {url: '/businessLog/listPage.action'});
+        $(window).resize(function () {
+            $('#businessLogGrid').bootstrapTable('resetView')
+        });
+        let size = ($(window).height() - $('#customerQueryForm').height() - 210) / 40;
+        size = size > 10 ? size : 10;
+        $('#businessLogGrid').bootstrapTable('refreshOptions', {
+            url: '/businessLog/listPage.action',
+            pageSize: parseInt(size)
+        });
     });
 
     /**
@@ -200,12 +208,6 @@
             return "";
         }
     }
-
-    // $(function() {
-    //     $('#businessLogGrid').on('load-success.bs.table', function () {
-    //         $('[data-toggle="tooltip"]').tooltip()
-    //     })
-    // })
 
 </script>
 
