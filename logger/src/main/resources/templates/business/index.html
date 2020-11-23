@@ -113,6 +113,31 @@
         </div>
     </div>
 </div>
+
+<div class="modal" tabindex="-1" role="dialog" id="viewModal">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">查看</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h6>日志内容：</h6>
+                <div class="business-content my-2"></div>
+                <hr>
+                <h6>备注：</h6>
+                <div class="business-mark"></div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary px-5"  data-dismiss="modal" id="cancel" onclick="javascript: parent.dia.hide()">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 </#bs4Body>
 
 <script>
@@ -203,10 +228,22 @@
      */
     function dataFormatterTip(value,row,index) {
         if (value) {
-           return "<span data-toggle='tooltip' data-placement='left' data-html='true' title='" + htmlTagDecode(value) + "'>" + value + "</span>";
+            return "<a href='javascript:openViewHandler(" + row.id + ")' data-toggle='tooltip' data-placement='left' data-html='true' title='" + htmlTagDecode(value) + "'>" + value + "</a>";
+           // return "<span data-toggle='tooltip' data-placement='left' data-html='true' title='" + htmlTagDecode(value) + "'>" + value + "</span>";
         } else {
             return "";
         }
+    }
+
+    /**
+     * 打开查看
+     * @param id
+     */
+    function openViewHandler(id) {
+        let str =  $('#businessLogGrid').bootstrapTable('getRowByUniqueId', id);
+        $('#viewModal .modal-body .business-content').html(str.content );
+        $('#viewModal .modal-body .business-mark').html(str.notes );
+        $('#viewModal').modal('show')
     }
 
 </script>
