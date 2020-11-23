@@ -96,8 +96,8 @@ public class BusinessLogApiController {
      */
     @RequestMapping(value = "/listPage", method = {RequestMethod.POST})
     public PageOutput listPage(@RequestBody(required = false) BusinessLogQueryInput condition) {
-        log.info("业务日志查询[listPage] 条件：[%s]", JSONUtil.toJsonStr(condition));
         try {
+            log.info(String.format("业务日志查询[listPage] 条件：[%s]", JSONUtil.toJsonStr(condition)));
             return businessLogService.searchPage(condition);
         }catch (Throwable throwable){
             log.error(String.format("分页查询业务日志异常[%s]",throwable.getMessage()),throwable);
@@ -114,8 +114,8 @@ public class BusinessLogApiController {
      */
     @RequestMapping(value = "/list", method = {RequestMethod.POST})
     public BaseOutput list(@RequestBody(required = false) BusinessLogQueryInput condition) {
-        log.info("业务日志查询[list] 条件：[%s]", JSONUtil.toJsonStr(condition));
         try {
+            log.info(String.format("业务日志查询[list] 条件：[%s]", JSONUtil.toJsonStr(condition)));
             return businessLogService.list(condition);
         }catch (Throwable throwable){
             log.error(String.format("查询业务日志异常[%s]",throwable.getMessage()),throwable);
