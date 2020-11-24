@@ -54,7 +54,7 @@ public class ExceptionLogServiceImpl implements ExceptionLogService {
         NativeSearchQueryBuilder searchQuery = new NativeSearchQueryBuilder();
         QueryBuilder queryBuilder = produceQuery(condition);
         searchQuery.withQuery(queryBuilder);
-        searchQuery.withSort(SortBuilders.fieldSort("createTime").order(SortOrder.DESC));
+        searchQuery.withSort(SortBuilders.fieldSort("id").order(SortOrder.DESC));
         //当前页码
         Integer pageNum = 1;
         //是否需要滚动查询

@@ -64,7 +64,7 @@ public class BusinessLogServiceImpl extends BaseLogServiceImpl<BusinessLog> impl
         NativeSearchQueryBuilder searchQuery = new NativeSearchQueryBuilder();
         QueryBuilder queryBuilder = produceQuery(condition);
         searchQuery.withQuery(queryBuilder);
-        searchQuery.withSort(SortBuilders.fieldSort("createTime").order(SortOrder.DESC));
+        searchQuery.withSort(SortBuilders.fieldSort("id").order(SortOrder.DESC));
         searchQuery.withHighlightFields(new HighlightBuilder.Field(highlight_content).preTags(preTag).postTags(postTag));
         //当前页码
         Integer pageNum = 1;
