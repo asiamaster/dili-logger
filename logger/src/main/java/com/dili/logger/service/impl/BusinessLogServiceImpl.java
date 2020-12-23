@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 
 import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -171,10 +172,10 @@ public class BusinessLogServiceImpl extends BaseLogServiceImpl<BusinessLog> impl
                 queryBuilder.must(QueryBuilders.termQuery("businessType", condition.getBusinessType()));
             }
             if (Objects.nonNull(condition.getCreateTimeStart())) {
-                queryBuilder.filter(QueryBuilders.rangeQuery("createTime").gte(condition.getCreateTimeStart()));
+                queryBuilder.filter(QueryBuilders.rangeQuery("createTime").gte(condition.getCreateTimeStart().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()));
             }
             if (Objects.nonNull(condition.getCreateTimeEnd())) {
-                queryBuilder.filter(QueryBuilders.rangeQuery("createTime").lte(condition.getCreateTimeEnd()));
+                queryBuilder.filter(QueryBuilders.rangeQuery("createTime").lte(condition.getCreateTimeEnd().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()));
             }
             if (StrUtil.isNotBlank(condition.getBusinessCode())) {
                 queryBuilder.must(QueryBuilders.termQuery("businessCode", condition.getBusinessCode()));
