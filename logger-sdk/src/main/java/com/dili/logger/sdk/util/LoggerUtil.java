@@ -19,12 +19,12 @@ public class LoggerUtil {
      * @param operatorId 操作人ID
      * @param operatorName 操作人姓名
      * @param operationType 操作类型
-     * @param marketId 所属内容
-     * @param notes 日志备注
-     * @param content 日志类型
+     * @param marketId 所属市场
+     * @param content 日志内容
      * @param businessType 业务类型
+     * @param notes 日志备注
      */
-    public static void buildBusinessLoggerContext(Long businessId, String businessCode, Long operatorId, String operatorName, String operationType, Long marketId, String notes, String content, String businessType) {
+    public static void buildBusinessLoggerContext(Long businessId, String businessCode, Long operatorId, String operatorName, String operationType, Long marketId, String content, String businessType, String notes) {
         LoggerContext.put(LoggerConstant.LOG_BUSINESS_CODE_KEY, businessCode);
         LoggerContext.put(LoggerConstant.LOG_BUSINESS_ID_KEY, businessId);
         LoggerContext.put(LoggerConstant.LOG_OPERATOR_ID_KEY, operatorId);
@@ -43,11 +43,25 @@ public class LoggerUtil {
      * @param operatorId 操作人ID
      * @param operatorName 操作人姓名
      * @param operationType 操作类型
-     * @param marketId 所属内容
+     * @param marketId 所属市场
      * @param notes 日志备注
-     * @param content 日志类型
+     * @param content 日志内容
      */
-    public static void buildBusinessLoggerContext(Long businessId, String businessCode, Long operatorId, String operatorName, String operationType, Long marketId, String notes, String content) {
-        buildBusinessLoggerContext(businessId, businessCode, operatorId, operatorName, operationType, marketId, notes, content, null);
+    public static void buildBusinessLoggerContext(Long businessId, String businessCode, Long operatorId, String operatorName, String operationType, Long marketId, String content, String notes) {
+        buildBusinessLoggerContext(businessId, businessCode, operatorId, operatorName, operationType, marketId, content, null, notes);
+    }
+
+    /**
+     * MQ发送日志内容时 构建业务日志的 LoggerContext
+     * @param businessId 业务ID
+     * @param businessCode 业务编号
+     * @param operatorId 操作人ID
+     * @param operatorName 操作人姓名
+     * @param operationType 操作类型
+     * @param marketId 所属市场
+     * @param content 日志内容
+     */
+    public static void buildBusinessLoggerContext(Long businessId, String businessCode, Long operatorId, String operatorName, String operationType, Long marketId, String content) {
+        buildBusinessLoggerContext(businessId, businessCode, operatorId, operatorName, operationType, marketId, content, null, null);
     }
 }
