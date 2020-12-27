@@ -2,7 +2,6 @@ package com.dili.logger.sdk.util;
 
 import com.dili.logger.sdk.base.LoggerContext;
 import com.dili.logger.sdk.glossary.LoggerConstant;
-import org.apache.commons.lang.StringUtils;
 
 /**
  * 日志服务util类
@@ -21,10 +20,10 @@ public class LoggerUtil {
      * @param operationType 操作类型
      * @param marketId 所属市场
      * @param content 日志内容
-     * @param businessType 业务类型
      * @param notes 日志备注
+     * @param businessType 业务类型
      */
-    public static void buildBusinessLoggerContext(Long businessId, String businessCode, Long operatorId, String operatorName, String operationType, Long marketId, String content, String businessType, String notes) {
+    public static void buildBusinessLoggerContext(Long businessId, String businessCode, Long operatorId, String operatorName, String operationType, Long marketId, String content, String notes, String businessType) {
         LoggerContext.put(LoggerConstant.LOG_BUSINESS_CODE_KEY, businessCode);
         LoggerContext.put(LoggerConstant.LOG_BUSINESS_ID_KEY, businessId);
         LoggerContext.put(LoggerConstant.LOG_OPERATOR_ID_KEY, operatorId);
@@ -48,7 +47,7 @@ public class LoggerUtil {
      * @param content 日志内容
      */
     public static void buildBusinessLoggerContext(Long businessId, String businessCode, Long operatorId, String operatorName, String operationType, Long marketId, String content, String notes) {
-        buildBusinessLoggerContext(businessId, businessCode, operatorId, operatorName, operationType, marketId, content, null, notes);
+        buildBusinessLoggerContext(businessId, businessCode, operatorId, operatorName, operationType, marketId, content, notes, null);
     }
 
     /**
@@ -62,6 +61,6 @@ public class LoggerUtil {
      * @param content 日志内容
      */
     public static void buildBusinessLoggerContext(Long businessId, String businessCode, Long operatorId, String operatorName, String operationType, Long marketId, String content) {
-        buildBusinessLoggerContext(businessId, businessCode, operatorId, operatorName, operationType, marketId, content, null, null);
+        buildBusinessLoggerContext(businessId, businessCode, operatorId, operatorName, operationType, marketId, content, null);
     }
 }
