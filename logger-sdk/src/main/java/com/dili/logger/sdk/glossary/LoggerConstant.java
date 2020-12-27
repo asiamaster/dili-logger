@@ -16,6 +16,11 @@ public interface LoggerConstant {
     String LOG_NOTES_KEY = "notes";
 
     /**
+     * 日志内容
+     */
+    String LOG_CONTENT_KEY = "content";
+
+    /**
      * 日志所属系统信息
      */
     String LOG_SYSTEM_CODE_KEY = "systemCode";
