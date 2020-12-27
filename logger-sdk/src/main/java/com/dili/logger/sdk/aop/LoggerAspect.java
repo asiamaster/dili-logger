@@ -102,34 +102,38 @@ public class LoggerAspect {
      * @param point
      * @return
      */
-    private BusinessLog getBusinessLog(ProceedingJoinPoint point){
+    private BusinessLog getBusinessLog(ProceedingJoinPoint point) {
         Method method = ((MethodSignature) point.getSignature()).getMethod();
+        //获取注解中的信息
         BusinessLogger businessLogger = method.getAnnotation(BusinessLogger.class);
         String logBuilderName = businessLogger.logBuilder();
         LogBuilder logBuilder = null;
         BusinessLog businessLog = new BusinessLog();
         try {
             logBuilder = getObj(logBuilderName, LogBuilder.class);
-            businessLog = (BusinessLog)logBuilder.build(method, point.getArgs());
+            businessLog = (BusinessLog) logBuilder.build(method, point.getArgs());
         } catch (Exception e) {
             e.printStackTrace();
         }
         //如果未显示的给业务类型赋值，则从注解中再拿取一次
-        if (StringUtils.isBlank(businessLog.getBusinessType())){
+        if (StringUtils.isBlank(businessLog.getBusinessType())) {
             businessLog.setBusinessType(businessLogger.businessType());
         }
         //如果未显示的给操作类型赋值，则从注解中再拿取一次
         if (StringUtils.isBlank(businessLog.getOperationType())) {
             businessLog.setOperationType(businessLogger.operationType());
         }
-        businessLog.setContent(getBeetlContent(method, point.getArgs(), LoggerContext.getRequest(), businessLogger.content()));
-        if(StringUtils.isBlank(businessLog.getNotes())) {
+        //如果未显示给日志内容赋值，则从注解中获取一次
+        if (StringUtils.isBlank(businessLog.getContent())){
+            businessLog.setContent(getBeetlContent(method, point.getArgs(), LoggerContext.getRequest(), businessLogger.content()));
+        }
+        if (StringUtils.isBlank(businessLog.getNotes())) {
             businessLog.setNotes(businessLogger.notes());
         }
-        if(StringUtils.isBlank(businessLog.getSystemCode())) {
+        if (StringUtils.isBlank(businessLog.getSystemCode())) {
             businessLog.setSystemCode(businessLogger.systemCode());
         }
-        if(businessLog.getCreateTime() == null) {
+        if (businessLog.getCreateTime() == null) {
             businessLog.setCreateTime(LocalDateTime.now());
         }
         return businessLog;
