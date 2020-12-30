@@ -2,6 +2,7 @@ package com.dili.logger.sdk.domain.input;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.dili.logger.sdk.domain.BusinessLog;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
@@ -25,6 +26,7 @@ public class BusinessLogQueryInput extends BusinessLog implements Serializable {
      */
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JSONField(format = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createTimeStart;
 
     /**
@@ -32,6 +34,7 @@ public class BusinessLogQueryInput extends BusinessLog implements Serializable {
      */
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JSONField(format = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createTimeEnd;
 
     /**
