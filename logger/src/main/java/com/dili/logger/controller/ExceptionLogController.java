@@ -59,7 +59,7 @@ public class ExceptionLogController {
         end.add(Calendar.DATE, 1);
         Calendar begin = CalendarUtil.beginOfDay(end);
         modelMap.put("createTimeStart", DateUtil.format(begin.getTime(), "yyyy-MM-dd HH:mm:ss"));
-        List<ClassifyValue> classifyValueList = classifyValueService.getByClassify(LoggerClassify.BUSINESS.getCode());
+        List<ClassifyValue> classifyValueList = classifyValueService.getByClassify(LoggerClassify.EXCEPTION.getCode());
         modelMap.put("exceptionTypeList", classifyValueList);
         return "exception/index";
     }

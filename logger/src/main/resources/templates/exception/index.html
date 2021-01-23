@@ -26,7 +26,7 @@
                     <select class="form-control" id="exceptionType" name="exceptionType">
                         <option value="">-- 全部 --</option>
                         <%if (isNotEmpty(exceptionTypeList) && exceptionTypeList.~size >0 ){
-                        for(exceptionType in operationTypeList){
+                        for(exceptionType in exceptionTypeList){
                         %>
                             <option value="${exceptionType.code}">${exceptionType.value!}</option>
                         <% }} %>
@@ -116,11 +116,10 @@
             </div>
             <div class="modal-body">
                 <h6>异常信息：</h6>
-                <div class="exceptions-content my-2"></div>
+                <div class="exceptions-content my-2" style="word-break: break-all;"></div>
                 <hr>
                 <h6>备注：</h6>
-                <div class="exceptions-mark"></div>
-
+                <div class="exceptions-mark" style="word-break: break-all;"></div>
             </div>
             <div class="modal-footer">
                     <button type="button" class="btn btn-secondary px-5"  data-dismiss="modal" id="cancel" onclick="javascript: parent.dia.hide()">关闭</button>
