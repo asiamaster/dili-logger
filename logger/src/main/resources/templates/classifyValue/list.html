@@ -1,0 +1,135 @@
+<#bs4Body>
+<div class="container-fluid">
+    <#bs4nav>
+    <form class="form" id="classifyValueQueryForm">
+        <div class="row  row-cols-6">
+            <div class="form-group col">
+                <label for="">日志类别</label>
+                <select class="form-control" id="classify" name="classify"></select>
+                <#bcomboProvider _id="classify" _provider="loggerClassifyProvider" _queryParams='{emptyText:"-- 全部 --"}'/>
+            </div>
+            <div class="form-group col">
+                <label for="">值编码</label>
+                <input type="text" class="form-control" id="code" name="code" placeholder="请输入">
+            </div>
+            <div class="form-group col">
+                <label for="">值文本</label>
+                <input type="text" class="form-control" id="value" name="value" placeholder="请输入,模糊匹配">
+            </div>
+            <div class="col align-self-center mt-3">
+                <button type="button" class="btn btn-outline-primary mr-2"onclick="javascript:$('#classifyValueQueryForm .form-control').val('');"><i class="fa fa-refresh"></i> 清空</button>
+                <button type="button" class="btn btn-outline-primary" onclick="queryClassifyValueDataHandler()"><i class="fa fa-search"></i> 查询</button>
+            </div>
+        </div>
+    </form>
+    </#bs4nav>
+    <hr>
+    <div class="">
+        <div class="row">
+            <div class="col-12">
+                <div id="toolbar" class="btn-group" role="group" aria-label="Toolbar with button groups">
+                    <button id="btn_add" type="button" class="btn btn-primary" onclick="openInsertHandler()">
+                        <i class="fa fa-plus"></i> 新增
+                    </button>
+                    <button id="btn_edit" type="button" class="btn btn-primary" onclick="openUpdateHandler()">
+                        <i class="fa fa-pencil-square-o"></i> 修改
+                    </button>
+                </div>
+                <table id="classifyValueGrid" data-toggle="table" data-title="日志类别操作值信息" class="table" data-toolbar="#toolbar"
+                       data-pagination="true" data-page-number="1" data-page-size="10" data-query-params="queryParams"
+                       data-side-pagination="server" data-method="POST"
+                       data-content-type="application/json; charset=utf-8" data-single-select="true"
+                       data-click-to-select="true" data-checkbox-header="true" data-unique-id="id" data-sort-name="id"
+                       data-sort-order="desc" data-icons="bui.variable.icons" data-buttons-class="primary"
+                       data-show-refresh="true" data-show-fullscreen="true" data-show-columns="true">
+                    <thead>
+                    <tr>
+                        <th data-width-unit="%" data-width="2" data-radio="true"></th>
+                        <th data-width-unit="%" data-width="8" data-field="classify" data-sort-name="Classify" data-align="center" data-provider="loggerClassifyProvider">
+                            日志类别
+                        </th>
+                        <th data-width-unit="%" data-width="10" data-field="code" data-align="center">
+                            值编码
+                        </th>
+                        <th data-width-unit="%" data-width="8" data-field="value" data-align="center" data-sortable="false">
+                            值文本
+                        </th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+</#bs4Body>
+<script src="${contextPath}/resources/bui/js/base_list.js" type="text/javascript"></script>
+<script>
+
+    let _dataGrid = $('#classifyValueGrid');
+    let currentSelectRowIndex;
+    var dia;
+
+    /**
+     * table参数组装
+     * 可修改queryParams向服务器发送其余的参数
+     * @param params
+     */
+    function queryParams(params) {
+        let temp = {
+            rows: params.limit,   //页面大小
+            page: ((params.offset / params.limit) + 1) || 1, //页码
+            sort: params.sort,
+            order: params.order
+        };
+        return JSON.stringify($.extend(temp, bui.util.bindGridMeta2Form('classifyValueGrid', 'classifyValueQueryForm')));
+    }
+
+    /**
+     * 查询处理
+     */
+    function queryClassifyValueDataHandler() {
+        currentSelectRowIndex = undefined;
+        $('#toolbar button').attr('disabled', false);
+        $('#classifyValueGrid').bootstrapTable('refreshOptions', {pageNumber: 1});
+    }
+
+    $(function () {
+        $(window).resize(function () {
+            $('#classifyValueGrid').bootstrapTable('resetView')
+        });
+        let size = ($(window).height() - $('#classifyValueQueryForm').height() - 210) / 40;
+        size = size > 10 ? size : 10;
+        $('#classifyValueGrid').bootstrapTable('refreshOptions', {
+            url: '/classifyValue/listPage.action',
+            pageSize: parseInt(size)
+        });
+    });
+
+    /**
+     * 打开新增窗口
+     */
+    function openInsertHandler() {
+        let url = "/classifyValue/preSave.action";
+        $.modal.open("添加类型值", url, 700,600);
+    }
+
+    /**
+     * 打开修改页面
+     */
+    function openUpdateHandler(){
+        //获取选中行的数据
+        let rows = _dataGrid.bootstrapTable('getSelections');
+        if (null == rows || rows.length == 0) {
+            bs4pop.alert('请选中一条数据');
+            return;
+        }
+        //table选择模式是单选时可用
+        let selectedRow = rows[0];
+        $.modal.open("修改类型值", "/classifyValue/preSave.action?id=" + selectedRow.id,700,600);
+    }
+
+
+
+</script>
+

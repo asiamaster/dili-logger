@@ -1,4 +1,4 @@
-package com.dili.logger.mapper;
+package com.dili.logger.repository;
 
 import com.dili.logger.domain.BusinessLog;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;

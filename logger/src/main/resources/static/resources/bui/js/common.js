@@ -16,12 +16,7 @@ $(function(){
 });
 
 /******************************驱动执行区 begin***************************/
-/*$(function () {
-    $(window).resize(function () {
-        _grid.bootstrapTable('resetView')
-    });
-    queryDataHandler();
-});*/
+
 
 /******************************驱动执行区 end****************************/
 
@@ -155,3 +150,51 @@ $(document).on('show.bs.collapse', 'form .collapse', function () {
     let id = $(this).attr('id');
     $('[data-target="#'+ id +'"]').html('收起 <i class="fa fa-angle-double-up" aria-hidden="true"></i>');
 });
+
+
+/**
+ * 根据provider获取数据，此方法是异步数据请求
+ * @param data 请求参数
+ * @param first 是否选择第一个
+ * @param name 绑定的控件名称
+ * @returns {[]}
+ */
+function loadDataByProviderAsync(data, first, name) {
+    return new Promise((resolve, reject) => {
+        axios.post('/convert/list.action', data)
+            .then((res) => {
+                if (first) {
+                    if (!app.formData[name]) {
+                        app.formData[name] = res.data[0].value;
+                    }
+                }
+                resolve(res.data);
+            })
+            .catch(function (error) {
+                reject(error);
+            });
+    });
+}
+
+/**
+ * 根据provider获取数据，此方法是同步数据请求
+ * @param data 请求参数
+ * @returns {[]}
+ */
+function loadByProviderSync(data) {
+    let resultData =[];
+    $.ajax({
+        type: "POST",
+        url: "/convert/list.action",
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        dataType: "json",
+        async : false,
+        success : function(ret) {
+            resultData =  ret;
+        },
+        error : function() {
+        }
+    });
+    return resultData;
+}

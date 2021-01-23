@@ -4,8 +4,11 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.CalendarUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.json.JSONUtil;
+import com.dili.logger.domain.ClassifyValue;
 import com.dili.logger.domain.ExceptionLog;
+import com.dili.logger.enums.LoggerClassify;
 import com.dili.logger.sdk.domain.input.ExceptionLogQueryInput;
+import com.dili.logger.service.ClassifyValueService;
 import com.dili.logger.service.ExceptionLogService;
 import com.dili.logger.service.remote.FirmRpcService;
 import com.dili.ss.domain.EasyuiPageOutput;
@@ -39,11 +42,11 @@ import java.util.stream.Collectors;
 public class ExceptionLogController {
 
     private final ExceptionLogService exceptionLogService;
-
     private final FirmRpcService firmRpcService;
+    private final ClassifyValueService classifyValueService;
 
     /**
-     * 跳转到个人客户管理页面
+     * 跳转到异常日志管理页面
      *
      * @param modelMap
      * @return String
@@ -56,6 +59,8 @@ public class ExceptionLogController {
         end.add(Calendar.DATE, 1);
         Calendar begin = CalendarUtil.beginOfDay(end);
         modelMap.put("createTimeStart", DateUtil.format(begin.getTime(), "yyyy-MM-dd HH:mm:ss"));
+        List<ClassifyValue> classifyValueList = classifyValueService.getByClassify(LoggerClassify.BUSINESS.getCode());
+        modelMap.put("exceptionTypeList", classifyValueList);
         return "exception/index";
     }
 

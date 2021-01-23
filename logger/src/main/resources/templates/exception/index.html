@@ -23,8 +23,14 @@
                 </div>
                 <div class="form-group col">
                     <label for="">异常类型</label>
-                    <select class="form-control" id="exceptionType" name="exceptionType"></select>
-                    <#bcomboProvider _id="exceptionType" _provider="dataDictionaryValueProvider"  _queryParams='{dd_code:"exception_type",emptyText:"-- 全部 --"}' _valueField="value" _textField="text" _value=""/>
+                    <select class="form-control" id="exceptionType" name="exceptionType">
+                        <option value="">-- 全部 --</option>
+                        <%if (isNotEmpty(exceptionTypeList) && exceptionTypeList.~size >0 ){
+                        for(exceptionType in operationTypeList){
+                        %>
+                            <option value="${exceptionType.code}">${exceptionType.value!}</option>
+                        <% }} %>
+                    </select>
                 </div>
                 <div class="form-group col">
                     <label for="">所属市场</label>

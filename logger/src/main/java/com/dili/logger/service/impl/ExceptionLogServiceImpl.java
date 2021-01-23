@@ -1,24 +1,26 @@
 package com.dili.logger.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import com.dili.logger.component.ElasticsearchUtil;
 import com.dili.logger.config.ESConfig;
+import com.dili.logger.domain.ClassifyValue;
 import com.dili.logger.domain.ExceptionLog;
-import com.dili.logger.mapper.ExceptionLogRepository;
+import com.dili.logger.enums.LoggerClassify;
+import com.dili.logger.repository.ExceptionLogRepository;
 import com.dili.logger.sdk.domain.input.ExceptionLogQueryInput;
+import com.dili.logger.service.ClassifyValueService;
 import com.dili.logger.service.ExceptionLogService;
-import com.dili.logger.service.remote.DataDictionaryRpcService;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.PageOutput;
-import com.dili.ss.sid.util.IdUtils;
-import com.dili.uap.sdk.domain.DataDictionaryValue;
+import lombok.RequiredArgsConstructor;
+import one.util.streamex.StreamEx;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
@@ -28,6 +30,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * <B>Description</B>
@@ -37,16 +40,15 @@ import java.util.Objects;
  * @author yuehongbo
  * @date 2020/3/10 17:48
  */
+@RequiredArgsConstructor
 @Service
 public class ExceptionLogServiceImpl implements ExceptionLogService {
 
     private static final IndexCoordinates index = IndexCoordinates.of("dili-exception-logger");
-    @Autowired
-    private ExceptionLogRepository exceptionLogRepository;
-    @Autowired
-    private DataDictionaryRpcService dataDictionaryRpcService;
-    @Autowired
-    private ElasticsearchUtil elasticsearchUtil;
+
+    private final ExceptionLogRepository exceptionLogRepository;
+    private final ElasticsearchUtil elasticsearchUtil;
+    private final ClassifyValueService classifyValueService;
 
     @Override
     public PageOutput<List<ExceptionLog>> searchPage(ExceptionLogQueryInput condition) {
@@ -103,12 +105,15 @@ public class ExceptionLogServiceImpl implements ExceptionLogService {
 
     @Override
     public void save(ExceptionLog log) {
-        log.setId(IdUtils.nextId());
+        if (StrUtil.isBlank(log.getExceptionTypeText())) {
+            Optional<ClassifyValue> byClassifyAndCode = classifyValueService.getByClassifyAndCode(LoggerClassify.EXCEPTION.getCode(), log.getExceptionType());
+            if (byClassifyAndCode.isPresent()) {
+                log.setExceptionTypeText(byClassifyAndCode.get().getValue());
+            }
+        }
+        log.setId(IdUtil.getSnowflake(1, 1).nextId());
         if (Objects.isNull(log.getCreateTime())) {
             log.setCreateTime(LocalDateTime.now());
-        }
-        if (StrUtil.isBlank(log.getExceptionTypeText())) {
-            log.setExceptionTypeText(dataDictionaryRpcService.getByDdCodeAndCode("exception_type", log.getExceptionType()).map(DataDictionaryValue::getName).orElse(""));
         }
         exceptionLogRepository.save(log);
     }
@@ -116,14 +121,15 @@ public class ExceptionLogServiceImpl implements ExceptionLogService {
     @Override
     public void batchSave(List<ExceptionLog> logList) {
         if (CollectionUtil.isNotEmpty(logList)) {
-            Map<String, DataDictionaryValue> exceptionTypeMap = dataDictionaryRpcService.getExceptionTypeMap();
+            List<ClassifyValue> byClassify = classifyValueService.getByClassify(LoggerClassify.EXCEPTION.getCode());
+            Map<String, ClassifyValue> exceptionTypeMap = StreamEx.of(byClassify).toMap(ClassifyValue::getCode, t -> t, (v1, v2) -> v1);
             logList.forEach(l -> {
-                l.setId(IdUtils.nextId());
+                l.setId(IdUtil.getSnowflake(1, 1).nextId());
                 if (Objects.isNull(l.getCreateTime())) {
                     l.setCreateTime(LocalDateTime.now());
                 }
                 if (StrUtil.isBlank(l.getExceptionTypeText())) {
-                    l.setExceptionTypeText(exceptionTypeMap.containsKey(l.getExceptionType()) ? exceptionTypeMap.get(l.getExceptionType()).getName() : "");
+                    l.setExceptionTypeText(exceptionTypeMap.containsKey(l.getExceptionType()) ? exceptionTypeMap.get(l.getExceptionType()).getValue() : "");
                 }
             });
             exceptionLogRepository.saveAll(logList);

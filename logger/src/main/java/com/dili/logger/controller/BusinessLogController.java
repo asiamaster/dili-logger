@@ -5,10 +5,12 @@ import cn.hutool.core.date.CalendarUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.json.JSONUtil;
 import com.dili.logger.domain.BusinessLog;
+import com.dili.logger.domain.ClassifyValue;
+import com.dili.logger.enums.LoggerClassify;
 import com.dili.logger.sdk.domain.input.BusinessLogQueryInput;
 import com.dili.logger.service.BusinessLogService;
+import com.dili.logger.service.ClassifyValueService;
 import com.dili.logger.service.remote.FirmRpcService;
-import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.EasyuiPageOutput;
 import com.dili.ss.domain.PageOutput;
 import com.dili.ss.metadata.ValueProviderUtils;
@@ -16,7 +18,6 @@ import com.dili.uap.sdk.domain.Firm;
 import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,11 +42,11 @@ import java.util.stream.Collectors;
 public class BusinessLogController {
 
     private final BusinessLogService businessLogService;
-
     private final FirmRpcService firmRpcService;
+    private final ClassifyValueService classifyValueService;
 
     /**
-     * 跳转到个人客户管理页面
+     * 跳转到业务日志管理页面
      *
      * @param modelMap
      * @return String
@@ -58,6 +59,8 @@ public class BusinessLogController {
         end.add(Calendar.DATE, 1);
         Calendar begin = CalendarUtil.beginOfDay(end);
         modelMap.put("createTimeStart", DateUtil.format(begin.getTime(), "yyyy-MM-dd HH:mm:ss"));
+        List<ClassifyValue> classifyValueList = classifyValueService.getByClassify(LoggerClassify.BUSINESS.getCode());
+        modelMap.put("operationTypeList", classifyValueList);
         return "business/index";
     }
 

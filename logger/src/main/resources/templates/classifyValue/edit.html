@@ -1,0 +1,104 @@
+<#bs4Body>
+<#vueElm />
+<div id=app>
+    <div class="container-fluid pb-5">
+        <ele-form
+           :form-attrs="{
+                size: 'large'
+            }"
+            form-btn-size="medium"
+            v-bind="formConfig"
+            v-model="formData"
+            :request-fn="handleRequest">
+        </ele-form>
+    </div>
+</div>
+<style>
+    .aa i:hover {
+        color: #5cb6ff;
+    }
+</style>
+</#bs4Body>
+
+<script>
+    window.rootPath = '${contextPath}';
+    function init(vm){
+        vm.formData = ${classifyValue!};
+    }
+</script>
+<script>
+    var app = new Vue({
+        el: '#app',
+        data() {
+            return {
+                formData: {},
+                formConfig:{
+                    isShowErrorNotify: false,
+                    isShowBackBtn:false,
+                    formBtns: [
+                        {
+                            text: '关闭',
+                            type: 'primary',
+                            click: () => {
+                                $.modal.close();
+                            }
+                        }
+                    ],
+                    formDesc: {
+                        classify: {
+                            options: loadDataByProviderAsync({
+                                provider: 'loggerClassifyProvider',
+                                queryParams: {required: true}
+                            }, true, "classify"),
+                            label: "日志类别",
+                            type: "select",
+                            required: true
+                        },
+                        code: {
+                            label: "值编码",
+                            type: "input",
+                            required: true,
+                            attrs: {
+                                maxlength: 20,
+                                showWordLimit: true,
+                            }
+                        },
+                        value: {
+                            label: "值文本",
+                            type: "input",
+                            required: true,
+                            attrs: {
+                                maxlength: 100,
+                                showWordLimit: true,
+                            }
+                        }
+                    }
+                },
+            };
+        },
+        methods: {
+            handleRequest(data) {
+                axios.post(rootPath + "/classifyValue/save.action", data)
+                    .then(function (response) {
+                        if (response.data.success){
+                            $.modal.close();
+                            parent.queryDataHandler();
+                        }else{
+                            $.modal.alertError(response.data.message);
+                        }
+                    })
+                    .catch(function (error) {
+                        $.modal.alertError("系统错误");
+                    });
+            },
+            handleRequestSuccess() {
+                this.$message.success('保存成功')
+            }
+        },
+        created: function () {
+            // `this` 指向 vm 实例
+            init(this)
+        }
+    })
+
+</script>

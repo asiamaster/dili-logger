@@ -46,6 +46,12 @@
 			<groupId>com.alibaba.cloud</groupId>
 			<artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
 			<version>2.2.3.RELEASE</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>fastjson</artifactId>
+					<groupId>com.alibaba</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.alibaba.csp</groupId>
@@ -80,11 +86,9 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>javax.persistence</groupId>
-			<artifactId>persistence-api</artifactId>
-			<version>1.0</version>
+			<groupId>jakarta.persistence</groupId>
+			<artifactId>jakarta.persistence-api</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -93,47 +97,22 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>cn.hutool</groupId>
 			<artifactId>hutool-all</artifactId>
-			<version>5.3.10</version>
+			<version>5.5.7</version>
+		</dependency>
+		<dependency>
+			<groupId>one.util</groupId>
+			<artifactId>streamex</artifactId>
+			<version>0.7.3</version>
 		</dependency>
 		<!-- 内部包  -->
-
 		<dependency>
 			<groupId>com.dili</groupId>
 			<artifactId>logger-sdk</artifactId>
 			<version>${project.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>com.dili</groupId>
-			<artifactId>ss-uid</artifactId>
-			<version>${sharp-sword.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>tk.mybatis</groupId>
-					<artifactId>mapper-spring-boot-starter</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.github.pagehelper</groupId>
-					<artifactId>pagehelper-spring-boot-starter</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.alibaba</groupId>
-					<artifactId>druid-spring-boot-starter</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>mysql</groupId>
-					<artifactId>mysql-connector-java</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.alibaba</groupId>
-					<artifactId>druid</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.dili</groupId>
@@ -149,7 +128,6 @@
 					<artifactId>ss-core</artifactId>
 				</exclusion>
 			</exclusions>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.dili</groupId>
@@ -167,28 +145,34 @@
 			<version>2.11.0-SNAPSHOT</version>
 			<exclusions>
 				<exclusion>
-					<groupId>tk.mybatis</groupId>
-					<artifactId>mapper-spring-boot-starter</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.github.pagehelper</groupId>
-					<artifactId>pagehelper-spring-boot-starter</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.alibaba</groupId>
-					<artifactId>druid-spring-boot-starter</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>mysql</groupId>
-					<artifactId>mysql-connector-java</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.alibaba</groupId>
-					<artifactId>druid</artifactId>
-				</exclusion>
-				<exclusion>
-					<artifactId>logger-sdk</artifactId>
+					<artifactId>ss-redis</artifactId>
 					<groupId>com.dili</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>ss-beetl</artifactId>
+					<groupId>com.dili</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.dili</groupId>
+			<artifactId>ss-beetl</artifactId>
+			<version>${sharp-sword.version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>persistence-api</artifactId>
+					<groupId>javax.persistence</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.dili</groupId>
+			<artifactId>ss-redis</artifactId>
+			<version>${sharp-sword.version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>persistence-api</artifactId>
+					<groupId>javax.persistence</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>

@@ -1,18 +1,21 @@
 package com.dili.logger.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import com.dili.logger.component.ElasticsearchUtil;
 import com.dili.logger.config.ESConfig;
 import com.dili.logger.domain.BusinessLog;
-import com.dili.logger.mapper.BusinessLogRepository;
+import com.dili.logger.domain.ClassifyValue;
+import com.dili.logger.enums.LoggerClassify;
+import com.dili.logger.repository.BusinessLogRepository;
 import com.dili.logger.sdk.domain.input.BusinessLogQueryInput;
 import com.dili.logger.service.BusinessLogService;
-import com.dili.logger.service.remote.DataDictionaryRpcService;
+import com.dili.logger.service.ClassifyValueService;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.PageOutput;
-import com.dili.ss.sid.util.IdUtils;
-import com.dili.uap.sdk.domain.DataDictionaryValue;
+import lombok.RequiredArgsConstructor;
+import one.util.streamex.StreamEx;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -20,7 +23,6 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
@@ -32,6 +34,7 @@ import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * <B>Description</B>
@@ -41,16 +44,15 @@ import java.util.Objects;
  * @author yuehongbo
  * @date 2020/2/10 18:12
  */
+@RequiredArgsConstructor
 @Service
 public class BusinessLogServiceImpl extends BaseLogServiceImpl<BusinessLog> implements BusinessLogService<BusinessLog> {
 
     private static final IndexCoordinates index = IndexCoordinates.of("dili-business-logger");
-    @Autowired
-    private BusinessLogRepository businessLogRepository;
-    @Autowired
-    private DataDictionaryRpcService dataDictionaryRpcService;
-    @Autowired
-    private ElasticsearchUtil elasticsearchUtil;
+
+    private final BusinessLogRepository businessLogRepository;
+    private final ElasticsearchUtil elasticsearchUtil;
+    private final ClassifyValueService classifyValueService;
 
     //高亮线上的前缀标签
     String preTag = "<font color=\"#dd4b39\"><strong>";
@@ -115,29 +117,33 @@ public class BusinessLogServiceImpl extends BaseLogServiceImpl<BusinessLog> impl
 
     @Override
     public void save(BusinessLog log) {
-        //由日志系统生成统一的ID，忽略客户传入的ID
-        log.setId(IdUtils.nextId());
+        if (StrUtil.isBlank(log.getOperationTypeText())) {
+            Optional<ClassifyValue> byClassifyAndCode = classifyValueService.getByClassifyAndCode(LoggerClassify.BUSINESS.getCode(), log.getOperationType());
+            if (byClassifyAndCode.isPresent()) {
+                log.setOperationTypeText(byClassifyAndCode.get().getValue());
+            }
+        }
         if (Objects.isNull(log.getCreateTime())) {
             log.setCreateTime(LocalDateTime.now());
         }
-        if (StrUtil.isBlank(log.getOperationTypeText())) {
-            log.setOperationTypeText(dataDictionaryRpcService.getByDdCodeAndCode("operation_type", log.getOperationType()).map(DataDictionaryValue::getName).orElse(""));
-        }
+        //由日志系统生成统一的ID，忽略客户传入的ID
+        log.setId(IdUtil.getSnowflake(1, 1).nextId());
         businessLogRepository.save(log);
     }
 
     @Override
     public void batchSave(List<BusinessLog> logList) {
         if (CollectionUtil.isNotEmpty(logList)) {
-            Map<String, DataDictionaryValue> operationTypeMap = dataDictionaryRpcService.getOperationTypeMap();
+            List<ClassifyValue> byClassify = classifyValueService.getByClassify(LoggerClassify.BUSINESS.getCode());
+            Map<String, ClassifyValue> operationTypeMap = StreamEx.of(byClassify).toMap(ClassifyValue::getCode, t -> t, (v1, v2) -> v1);
             logList.forEach(l -> {
                 //由日志系统生成统一的ID，忽略客户传入的ID
-                l.setId(IdUtils.nextId());
+                l.setId(IdUtil.getSnowflake(1, 1).nextId());
                 if (Objects.isNull(l.getCreateTime())) {
                     l.setCreateTime(LocalDateTime.now());
                 }
                 if (StrUtil.isBlank(l.getOperationTypeText())) {
-                    l.setOperationTypeText(operationTypeMap.containsKey(l.getOperationType()) ? operationTypeMap.get(l.getOperationType()).getName() : "");
+                    l.setOperationTypeText(operationTypeMap.containsKey(l.getOperationType()) ? operationTypeMap.get(l.getOperationType()).getValue() : "");
                 }
             });
             businessLogRepository.saveAll(logList);

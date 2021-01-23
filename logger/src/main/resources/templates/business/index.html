@@ -27,8 +27,14 @@
                 </div>
                 <div class="form-group col">
                     <label for="">操作类型</label>
-                    <select class="form-control" id="operationType" name="operationType"></select>
-                    <#bcomboProvider _id="operationType" _provider="dataDictionaryValueProvider"  _queryParams='{dd_code:"operation_type",emptyText:"-- 全部 --"}' _valueField="value" _textField="text" _value=""/>
+                    <select class="form-control" id="operationType" name="operationType">
+                        <option value="">-- 全部 --</option>
+                        <%if (isNotEmpty(operationTypeList) && operationTypeList.~size >0 ){
+                            for(operationType in operationTypeList){
+                        %>
+                            <option value="${operationType.code}">${operationType.value!}</option>
+                        <% }} %>
+                    </select>
                 </div>
                 <div class="form-group col">
                     <label for="">业务类型</label>
