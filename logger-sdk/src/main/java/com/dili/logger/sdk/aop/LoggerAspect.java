@@ -76,18 +76,29 @@ public class LoggerAspect {
         }else {
             LoggerContext.put(request);
         }
+        Object retValue = null;
+        //单独try/catch处理业务执行，业务异常时不记日志
         try {
             //先执行方法
-            Object retValue = point.proceed();
+            retValue = point.proceed();
             //如果是BaseOutput.failure()，则不输出日志
             if(retValue instanceof BaseOutput && !((BaseOutput)retValue).isSuccess()){
                 return retValue;
             }
+        }catch (Exception e){
+            //如果当前线程是最外层AOP，则需要清除ThreadLocal缓存
+            if(!containsRequest) {
+                LoggerContext.resetLocal();
+            }
+            throw e;
+        }
+        //单独try/catch处理日志，日志异常不会异常正常业务回滚，日志发送异常则返回空
+        try{
             rabbitMQMessageService.send(LoggerConstant.MQ_LOGGER_TOPIC_EXCHANGE, LoggerConstant.MQ_LOGGER_ADD_BUSINESS_KEY, JSON.toJSONString(getBusinessLog(point)));
             return retValue;
         }catch (Exception e){
-            LOGGER.error(e.getMessage());
-            return null;
+            LOGGER.error("日志发送异常:"+e.getMessage());
+            return retValue;
         }finally {
             //如果当前线程是最外层AOP，则需要清除ThreadLocal缓存
             if(!containsRequest) {
