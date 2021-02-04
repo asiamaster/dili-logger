@@ -71,9 +71,9 @@ public class LoggerAspect {
         HttpServletRequest request = ((ServletRequestAttributes) (RequestContextHolder.currentRequestAttributes())).getRequest();
         //当前线程是否包含Request，如果有，则说明在外层已经放入了Request，不需要清除ThreadLocal中的缓存
         boolean containsRequest = false;
-        if(LoggerContext.getRequest() != null){
+        if (LoggerContext.getRequest() != null) {
             containsRequest = true;
-        }else {
+        } else {
             LoggerContext.put(request);
         }
         Object retValue = null;
@@ -82,30 +82,29 @@ public class LoggerAspect {
             //先执行方法
             retValue = point.proceed();
             //如果是BaseOutput.failure()，则不输出日志
-            if(retValue instanceof BaseOutput && !((BaseOutput)retValue).isSuccess()){
+            if (retValue instanceof BaseOutput && !((BaseOutput) retValue).isSuccess()) {
                 return retValue;
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             //如果当前线程是最外层AOP，则需要清除ThreadLocal缓存
-            if(!containsRequest) {
+            if (!containsRequest) {
                 LoggerContext.resetLocal();
             }
             throw e;
         }
         //单独try/catch处理日志，日志异常不会异常正常业务回滚，日志发送异常则返回空
-        try{
+        try {
             rabbitMQMessageService.send(LoggerConstant.MQ_LOGGER_TOPIC_EXCHANGE, LoggerConstant.MQ_LOGGER_ADD_BUSINESS_KEY, JSON.toJSONString(getBusinessLog(point)));
             return retValue;
-        }catch (Exception e){
-            LOGGER.error("日志发送异常:"+e.getMessage());
+        } catch (Exception e) {
+            LOGGER.error(String.format("日志发送异常:%s", e.getMessage()), e);
             return retValue;
-        }finally {
+        } finally {
             //如果当前线程是最外层AOP，则需要清除ThreadLocal缓存
-            if(!containsRequest) {
+            if (!containsRequest) {
                 LoggerContext.resetLocal();
             }
         }
-
     }
 
     /**
@@ -135,7 +134,7 @@ public class LoggerAspect {
             businessLog.setOperationType(businessLogger.operationType());
         }
         //如果未显示给日志内容赋值，则从注解中获取一次
-        if (StringUtils.isBlank(businessLog.getContent())){
+        if (StringUtils.isBlank(businessLog.getContent())) {
             businessLog.setContent(getBeetlContent(method, point.getArgs(), LoggerContext.getRequest(), businessLogger.content()));
         }
         if (StringUtils.isBlank(businessLog.getNotes())) {

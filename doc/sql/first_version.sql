@@ -19,3 +19,5 @@ alter table classify_value comment '日志类型的分类值';
 
 INSERT INTO dili_logger.classify_value(classify,code,value,create_time,modify_time) SELECT 1,ddv.`code`,ddv.`name`,NOW(),NOW() FROM uap.data_dictionary_value ddv where ddv.dd_code='operation_type';
 INSERT INTO dili_logger.classify_value(classify,code,value,create_time,modify_time) SELECT 2,ddv.`code`,ddv.`name`,NOW(),NOW() FROM uap.data_dictionary_value ddv where ddv.dd_code='exception_type';
+
+INSERT INTO `uap`.`menu` (`code`, `system_id`, `parent_id`, `order_number`, `url`, `name`, `description`, `type`, `shortcut`) VALUES ('7c103262-0ed8-401f-9ae6-a7e959b9e20a', 2, 10, 12, 'http://logger.diligrp.com:8283/classifyValue/index.html', '日志类型值', '日志类型操作值配置', 1, 0);
