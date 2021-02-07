@@ -16,6 +16,11 @@ create table classify_value
     primary key (id)
 );
 alter table classify_value comment '日志类型的分类值';
+create unique index uni_classify_code on classify_value
+(
+   code,
+   classify
+);
 
 INSERT INTO dili_logger.classify_value(classify,code,value,create_time,modify_time) SELECT 1,ddv.`code`,ddv.`name`,NOW(),NOW() FROM uap.data_dictionary_value ddv where ddv.dd_code='operation_type';
 INSERT INTO dili_logger.classify_value(classify,code,value,create_time,modify_time) SELECT 2,ddv.`code`,ddv.`name`,NOW(),NOW() FROM uap.data_dictionary_value ddv where ddv.dd_code='exception_type';
