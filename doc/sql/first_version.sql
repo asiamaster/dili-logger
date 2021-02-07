@@ -7,7 +7,7 @@ create table classify_value
 (
     id                   bigint not null auto_increment comment 'ID',
     classify             tinyint comment '日志类型',
-    code                 varchar(20) comment '编码',
+    code                 varchar(50) comment '编码',
     value                varchar(100) comment '值',
     creator_id           bigint comment '创建人',
     create_time          datetime default CURRENT_TIMESTAMP comment '创建时间',

@@ -44,7 +44,7 @@ public class ClassifyValue extends BaseDomain {
      */
     @Column(name = "`code`")
     @NotNull(message = "编码不能为空")
-    @Size(max = 20,message = "类型编码不能超过20个字符")
+    @Size(max = 50,message = "类型编码不能超过50个字符")
     private String code;
 
     /**
