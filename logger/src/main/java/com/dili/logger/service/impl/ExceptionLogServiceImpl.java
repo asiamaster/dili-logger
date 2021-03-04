@@ -12,6 +12,7 @@ import com.dili.logger.repository.ExceptionLogRepository;
 import com.dili.logger.sdk.domain.input.ExceptionLogQueryInput;
 import com.dili.logger.service.ClassifyValueService;
 import com.dili.logger.service.ExceptionLogService;
+import com.dili.logger.utils.LogAppUtil;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.PageOutput;
 import lombok.RequiredArgsConstructor;
@@ -115,6 +116,8 @@ public class ExceptionLogServiceImpl implements ExceptionLogService {
         if (Objects.isNull(log.getCreateTime())) {
             log.setCreateTime(LocalDateTime.now());
         }
+        log.setRemoteIp(LogAppUtil.cutFirstIp(log.getRemoteIp()));
+        log.setServerIp(LogAppUtil.cutFirstIp(log.getServerIp()));
         exceptionLogRepository.save(log);
     }
 
@@ -131,6 +134,8 @@ public class ExceptionLogServiceImpl implements ExceptionLogService {
                 if (StrUtil.isBlank(l.getExceptionTypeText())) {
                     l.setExceptionTypeText(exceptionTypeMap.containsKey(l.getExceptionType()) ? exceptionTypeMap.get(l.getExceptionType()).getValue() : "");
                 }
+                l.setRemoteIp(LogAppUtil.cutFirstIp(l.getRemoteIp()));
+                l.setServerIp(LogAppUtil.cutFirstIp(l.getServerIp()));
             });
             exceptionLogRepository.saveAll(logList);
         }

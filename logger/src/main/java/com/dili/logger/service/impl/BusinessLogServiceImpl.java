@@ -12,6 +12,7 @@ import com.dili.logger.repository.BusinessLogRepository;
 import com.dili.logger.sdk.domain.input.BusinessLogQueryInput;
 import com.dili.logger.service.BusinessLogService;
 import com.dili.logger.service.ClassifyValueService;
+import com.dili.logger.utils.LogAppUtil;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.PageOutput;
 import lombok.RequiredArgsConstructor;
@@ -126,6 +127,8 @@ public class BusinessLogServiceImpl extends BaseLogServiceImpl<BusinessLog> impl
         if (Objects.isNull(log.getCreateTime())) {
             log.setCreateTime(LocalDateTime.now());
         }
+        log.setRemoteIp(LogAppUtil.cutFirstIp(log.getRemoteIp()));
+        log.setServerIp(LogAppUtil.cutFirstIp(log.getServerIp()));
         //由日志系统生成统一的ID，忽略客户传入的ID
         log.setId(IdUtil.getSnowflake(1, 1).nextId());
         businessLogRepository.save(log);
@@ -145,6 +148,8 @@ public class BusinessLogServiceImpl extends BaseLogServiceImpl<BusinessLog> impl
                 if (StrUtil.isBlank(l.getOperationTypeText())) {
                     l.setOperationTypeText(operationTypeMap.containsKey(l.getOperationType()) ? operationTypeMap.get(l.getOperationType()).getValue() : "");
                 }
+                l.setRemoteIp(LogAppUtil.cutFirstIp(l.getRemoteIp()));
+                l.setServerIp(LogAppUtil.cutFirstIp(l.getServerIp()));
             });
             businessLogRepository.saveAll(logList);
         }
