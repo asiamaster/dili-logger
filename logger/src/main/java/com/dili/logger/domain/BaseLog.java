@@ -75,13 +75,13 @@ public class BaseLog implements Serializable {
     /**
      * 客户端请求IP
      */
-    @Field(type = FieldType.Ip)
+    @Field(type = FieldType.Text)
     private String remoteIp;
 
     /**
      * 操作的服务端IP
      */
-    @Field(type = FieldType.Ip)
+    @Field(type = FieldType.Text)
     private String serverIp;
 
     /**
