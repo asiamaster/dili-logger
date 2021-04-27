@@ -200,12 +200,16 @@ public class BusinessLogServiceImpl extends BaseLogServiceImpl<BusinessLog> impl
             if (CollectionUtil.isNotEmpty(condition.getMarketIdSet())) {
                 queryBuilder.filter(QueryBuilders.termsQuery("marketId", condition.getMarketIdSet()));
             }
+            if (StrUtil.isNotEmpty(condition.getRemoteIp())) {
+                queryBuilder.filter(QueryBuilders.termsQuery("remoteIp", condition.getRemoteIp()));
+            }
             if (CollectionUtil.isNotEmpty(condition.getOperationTypeSet())) {
                 queryBuilder.filter(QueryBuilders.termsQuery("operationType", condition.getOperationTypeSet()));
             }
             if (StrUtil.isNotBlank(condition.getContent())) {
                 queryBuilder.filter(QueryBuilders.matchPhrasePrefixQuery("content", condition.getContent()));
             }
+
         }
         return queryBuilder;
     }
