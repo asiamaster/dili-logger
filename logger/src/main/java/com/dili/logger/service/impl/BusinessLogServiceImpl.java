@@ -2,6 +2,7 @@ package com.dili.logger.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.StrUtil;
 import com.dili.logger.component.ElasticsearchUtil;
 import com.dili.logger.config.ESConfig;
@@ -18,6 +19,7 @@ import com.dili.ss.domain.PageOutput;
 import lombok.RequiredArgsConstructor;
 import one.util.streamex.StreamEx;
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -69,7 +71,9 @@ public class BusinessLogServiceImpl extends BaseLogServiceImpl<BusinessLog> impl
         QueryBuilder queryBuilder = produceQuery(condition);
         searchQuery.withQuery(queryBuilder);
         searchQuery.withSort(SortBuilders.fieldSort("id").order(SortOrder.DESC));
-        searchQuery.withHighlightFields(new HighlightBuilder.Field(highlight_content).preTags(preTag).postTags(postTag));
+        if (NumberUtils.toInt(condition.getContentIsHighlight()+"",1)==1) {
+            searchQuery.withHighlightFields(new HighlightBuilder.Field(highlight_content).preTags(preTag).postTags(postTag));
+        }
         //当前页码
         Integer pageNum = 1;
         //是否需要滚动查询
@@ -202,6 +206,9 @@ public class BusinessLogServiceImpl extends BaseLogServiceImpl<BusinessLog> impl
             }
             if (StrUtil.isNotEmpty(condition.getRemoteIp())) {
                 queryBuilder.filter(QueryBuilders.termsQuery("remoteIp", condition.getRemoteIp()));
+            }
+            if (StrUtil.isNotEmpty(condition.getNotes())) {
+                queryBuilder.filter(QueryBuilders.termsQuery("notes", condition.getNotes()));
             }
             if (CollectionUtil.isNotEmpty(condition.getOperationTypeSet())) {
                 queryBuilder.filter(QueryBuilders.termsQuery("operationType", condition.getOperationTypeSet()));
