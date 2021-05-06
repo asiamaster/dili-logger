@@ -48,18 +48,27 @@ public class BusinessLogQueryInput extends BusinessLog implements Serializable {
     private Set<String> operationTypeSet;
 
     /**
+     * 业务ID集合
+     */
+    private Set<String> businessIdSet;
+
+    /**
      * content 是否高亮(值为1为高亮，0为不高亮)
      */
     private Integer contentIsHighlight;
 
+    public Set<String> getBusinessIdSet() {
+        return businessIdSet;
+    }
+    public void setBusinessIdSet(Set<String> businessIdSet) {
+        this.businessIdSet = businessIdSet;
+    }
     public Integer getContentIsHighlight() {
         return contentIsHighlight;
     }
-
     public void setContentIsHighlight(Integer contentIsHighlight) {
         this.contentIsHighlight = contentIsHighlight;
     }
-
     public LocalDateTime getCreateTimeStart() {
         return createTimeStart;
     }
