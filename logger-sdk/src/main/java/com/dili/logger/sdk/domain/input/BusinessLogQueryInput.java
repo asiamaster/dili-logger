@@ -50,17 +50,17 @@ public class BusinessLogQueryInput extends BusinessLog implements Serializable {
     /**
      * 业务ID集合
      */
-    private Set<String> businessIdSet;
+    private Set<Long> businessIdSet;
 
     /**
      * content 是否高亮(值为1为高亮，0为不高亮)
      */
     private Integer contentIsHighlight;
 
-    public Set<String> getBusinessIdSet() {
+    public Set<Long> getBusinessIdSet() {
         return businessIdSet;
     }
-    public void setBusinessIdSet(Set<String> businessIdSet) {
+    public void setBusinessIdSet(Set<Long> businessIdSet) {
         this.businessIdSet = businessIdSet;
     }
     public Integer getContentIsHighlight() {
