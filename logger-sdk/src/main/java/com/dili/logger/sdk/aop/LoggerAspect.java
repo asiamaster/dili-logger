@@ -70,12 +70,12 @@ public class LoggerAspect {
     public Object businessLogAround(ProceedingJoinPoint point) throws Throwable {
         HttpServletRequest request = ((ServletRequestAttributes) (RequestContextHolder.currentRequestAttributes())).getRequest();
         //当前线程是否包含Request，如果有，则说明在外层已经放入了Request，不需要清除ThreadLocal中的缓存
-        boolean containsRequest = false;
-        if (LoggerContext.getRequest() != null) {
-            containsRequest = true;
-        } else {
+//        boolean containsRequest = false;
+//        if (LoggerContext.getRequest() != null) {
+//            containsRequest = true;
+//        } else {
             LoggerContext.put(request);
-        }
+//        }
         Object retValue = null;
         //单独try/catch处理业务执行，业务异常时不记日志
         try {
