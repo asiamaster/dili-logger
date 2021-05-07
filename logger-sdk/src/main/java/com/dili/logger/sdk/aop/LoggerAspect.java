@@ -87,9 +87,9 @@ public class LoggerAspect {
             }
         } catch (Exception e) {
             //如果当前线程是最外层AOP，则需要清除ThreadLocal缓存
-            if (!containsRequest) {
+//            if (!containsRequest) {
                 LoggerContext.resetLocal();
-            }
+//            }
             throw e;
         }
         //单独try/catch处理日志，日志异常不会异常正常业务回滚，日志发送异常则返回空
@@ -101,9 +101,9 @@ public class LoggerAspect {
             return retValue;
         } finally {
             //如果当前线程是最外层AOP，则需要清除ThreadLocal缓存
-            if (!containsRequest) {
+//            if (!containsRequest) {
                 LoggerContext.resetLocal();
-            }
+//            }
         }
     }
 
