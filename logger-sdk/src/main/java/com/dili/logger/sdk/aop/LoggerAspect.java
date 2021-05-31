@@ -69,13 +69,7 @@ public class LoggerAspect {
     @Around( "@annotation(com.dili.logger.sdk.annotation.BusinessLogger)")
     public Object businessLogAround(ProceedingJoinPoint point) throws Throwable {
         HttpServletRequest request = ((ServletRequestAttributes) (RequestContextHolder.currentRequestAttributes())).getRequest();
-        //当前线程是否包含Request，如果有，则说明在外层已经放入了Request，不需要清除ThreadLocal中的缓存
-//        boolean containsRequest = false;
-//        if (LoggerContext.getRequest() != null) {
-//            containsRequest = true;
-//        } else {
-            LoggerContext.put(request);
-//        }
+        LoggerContext.put(request);
         Object retValue = null;
         //单独try/catch处理业务执行，业务异常时不记日志
         try {
@@ -86,11 +80,9 @@ public class LoggerAspect {
                 return retValue;
             }
         } catch (Exception e) {
-            //如果当前线程是最外层AOP，则需要清除ThreadLocal缓存
-//            if (!containsRequest) {
-                LoggerContext.resetLocal();
-//            }
             throw e;
+        }finally {
+            LoggerContext.resetLocal();
         }
         //单独try/catch处理日志，日志异常不会异常正常业务回滚，日志发送异常则返回空
         try {
@@ -100,10 +92,7 @@ public class LoggerAspect {
             LOGGER.error(String.format("日志发送异常:%s", e.getMessage()), e);
             return retValue;
         } finally {
-            //如果当前线程是最外层AOP，则需要清除ThreadLocal缓存
-//            if (!containsRequest) {
                 LoggerContext.resetLocal();
-//            }
         }
     }
 
