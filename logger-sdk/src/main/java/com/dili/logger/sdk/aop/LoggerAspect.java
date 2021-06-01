@@ -92,7 +92,7 @@ public class LoggerAspect {
             LOGGER.error(String.format("日志发送异常:%s", e.getMessage()), e);
             return retValue;
         } finally {
-           LoggerContext.resetLocal();
+            LoggerContext.resetLocal();
         }
     }
 
