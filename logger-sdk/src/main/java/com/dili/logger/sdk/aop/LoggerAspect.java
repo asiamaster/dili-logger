@@ -83,6 +83,7 @@ public class LoggerAspect {
             retValue = point.proceed();
             //如果是BaseOutput.failure()，则不输出日志
             if (retValue instanceof BaseOutput && !((BaseOutput) retValue).isSuccess()) {
+                LoggerContext.resetLocal();
                 return retValue;
             }
         } catch (Exception e) {
