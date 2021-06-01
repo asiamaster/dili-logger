@@ -71,28 +71,28 @@ public class LoggerAspect {
         HttpServletRequest request = ((ServletRequestAttributes) (RequestContextHolder.currentRequestAttributes())).getRequest();
         LoggerContext.put(request);
         Object retValue = null;
-        //单独try/catch处理业务执行，业务异常时不记日志
+
         try {
-            //先执行方法
-            retValue = point.proceed();
-            //如果是BaseOutput.failure()，则不输出日志
-            if (retValue instanceof BaseOutput && !((BaseOutput) retValue).isSuccess()) {
-                return retValue;
+            //单独try/catch处理业务执行，业务异常时不记日志
+            //单独try/catch处理日志，日志异常不会异常正常业务回滚，日志发送异常则返回空
+            try {
+                //先执行方法
+                retValue = point.proceed();
+                //如果是BaseOutput.failure()，则不输出日志
+                if (retValue instanceof BaseOutput && !((BaseOutput) retValue).isSuccess()) {
+                    return retValue;
+                }
+            } catch (Exception e) {
+                throw e;
             }
-        } catch (Exception e) {
-            throw e;
-        }finally {
-            LoggerContext.resetLocal();
-        }
-        //单独try/catch处理日志，日志异常不会异常正常业务回滚，日志发送异常则返回空
-        try {
-            rabbitMQMessageService.send(LoggerConstant.MQ_LOGGER_TOPIC_EXCHANGE, LoggerConstant.MQ_LOGGER_ADD_BUSINESS_KEY, JSON.toJSONString(getBusinessLog(point)));
+            rabbitMQMessageService.send(LoggerConstant.MQ_LOGGER_TOPIC_EXCHANGE, LoggerConstant.MQ_LOGGER_ADD_BUSINESS_KEY,
+                    JSON.toJSONString(getBusinessLog(point)));
             return retValue;
         } catch (Exception e) {
             LOGGER.error(String.format("日志发送异常:%s", e.getMessage()), e);
             return retValue;
         } finally {
-                LoggerContext.resetLocal();
+           LoggerContext.resetLocal();
         }
     }
 
